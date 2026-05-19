@@ -4,752 +4,916 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sales Projection & Conversion Intelligence</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 <style>
+/* ═══════════════════════════════════════════
+   ROOT TOKENS
+═══════════════════════════════════════════ */
 :root {
-  --bg:        #F4F6FB;
-  --bg2:       #FFFFFF;
-  --bg3:       #EEF1F8;
-  --border:    #E2E8F4;
-  --shadow:    0 2px 16px rgba(80,100,160,0.09);
-  --shadow-lg: 0 8px 40px rgba(80,100,160,0.13);
-
-  --blue:    #3B82F6;
-  --blue-lt: #EFF6FF;
-  --indigo:  #6366F1;
-  --ind-lt:  #EEF2FF;
-  --violet:  #8B5CF6;
-  --vio-lt:  #F5F3FF;
-  --teal:    #14B8A6;
-  --tea-lt:  #F0FDFA;
-  --green:   #22C55E;
-  --grn-lt:  #F0FDF4;
-  --amber:   #F59E0B;
-  --amb-lt:  #FFFBEB;
-  --rose:    #F43F5E;
-  --ros-lt:  #FFF1F2;
-  --sky:     #0EA5E9;
-  --sky-lt:  #F0F9FF;
-
-  --text:    #1E2A45;
-  --text2:   #4A5578;
-  --muted:   #94A3C8;
-  --font:    'Plus Jakarta Sans', sans-serif;
-  --mono:    'DM Mono', monospace;
+  --bg:       #F0F4FB;
+  --bg2:      #FFFFFF;
+  --bg3:      #EEF2FA;
+  --border:   #E0E8F4;
+  --shadow:   0 2px 14px rgba(60,90,160,.08);
+  --shadow-md:0 4px 24px rgba(60,90,160,.12);
+ 
+  --blue:   #3B82F6; --blue-lt:  #EFF6FF;
+  --indigo: #6366F1; --ind-lt:   #EEF2FF;
+  --violet: #8B5CF6; --vio-lt:   #F5F3FF;
+  --teal:   #14B8A6; --tea-lt:   #F0FDFA;
+  --green:  #22C55E; --grn-lt:   #F0FDF4;
+  --amber:  #F59E0B; --amb-lt:   #FFFBEB;
+  --rose:   #F43F5E; --ros-lt:   #FFF1F2;
+  --sky:    #0EA5E9; --sky-lt:   #F0F9FF;
+  --pink:   #EC4899; --pnk-lt:   #FDF2F8;
+ 
+  --text:   #1E2A45;
+  --text2:  #4A5578;
+  --muted:  #94A3C8;
+  --font:   'Plus Jakarta Sans', sans-serif;
+  --mono:   'DM Mono', monospace;
+  --sb-w:   280px;
 }
-
+ 
 * { margin:0; padding:0; box-sizing:border-box; }
 html { scroll-behavior:smooth; }
-
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--font);
-  min-height: 100vh;
-  font-size: 14px;
-}
-
-/* ── LOADING SCREEN ── */
+body { background:var(--bg); color:var(--text); font-family:var(--font); font-size:14px; display:flex; min-height:100vh; }
+ 
+/* ─── LOADER ─── */
 #loader {
   position:fixed; inset:0; background:#fff; z-index:9999;
-  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px;
-  transition: opacity .4s;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px;
+  transition:opacity .4s;
 }
 #loader.hide { opacity:0; pointer-events:none; }
-.spin {
-  width:44px; height:44px; border-radius:50%;
-  border:3px solid #E2E8F4; border-top-color:var(--blue);
-  animation:spin .7s linear infinite;
+.spin { width:42px; height:42px; border-radius:50%; border:3px solid #E2E8F4; border-top-color:var(--blue); animation:spin .7s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.load-txt { font-family:var(--mono); font-size:12px; color:var(--muted); }
+.load-bar-wrap { width:180px; height:3px; background:#E2E8F4; border-radius:99px; overflow:hidden; }
+.load-bar { height:100%; background:linear-gradient(90deg,var(--blue),var(--indigo)); border-radius:99px; animation:lbar 2s ease infinite; }
+@keyframes lbar { 0%{width:10%} 60%{width:80%} 100%{width:95%} }
+ 
+/* ─── SIDEBAR ─── */
+.sidebar {
+  width:var(--sb-w); min-height:100vh; background:var(--bg2);
+  border-right:1px solid var(--border);
+  display:flex; flex-direction:column; padding:0;
+  position:fixed; left:0; top:0; bottom:0; z-index:100;
+  box-shadow:2px 0 20px rgba(60,90,160,.06);
+  overflow-y:auto;
 }
-@keyframes spin { to{transform:rotate(360deg)} }
-.load-txt { font-size:13px; color:var(--muted); font-family:var(--mono); }
-.load-bar-wrap { width:200px; height:4px; background:#E2E8F4; border-radius:99px; overflow:hidden; }
-.load-bar { height:100%; background:linear-gradient(90deg,var(--blue),var(--indigo)); border-radius:99px; animation:loadbar 2s ease infinite; }
-@keyframes loadbar { 0%{width:10%} 50%{width:80%} 100%{width:95%} }
-
-/* ── PAGE ── */
-.page { max-width:1600px; margin:0 auto; padding:20px 24px 48px; }
-
-/* ── HEADER ── */
-.header {
-  background: linear-gradient(135deg, #1E3A8A 0%, #3B4FCB 50%, #6D28D9 100%);
-  border-radius:20px; padding:24px 32px; margin-bottom:20px;
+.sidebar::-webkit-scrollbar { width:3px; }
+.sidebar::-webkit-scrollbar-thumb { background:var(--border); border-radius:99px; }
+ 
+.sb-logo {
+  padding:20px 20px 16px;
+  background:linear-gradient(135deg,#1E3A8A,#4F46E5);
+  color:#fff;
+}
+.sb-logo-title { font-size:15px; font-weight:800; letter-spacing:-.2px; }
+.sb-logo-sub   { font-size:10px; color:rgba(255,255,255,.55); font-family:var(--mono); margin-top:3px; }
+ 
+.sb-section { padding:16px 16px 0; }
+.sb-section-label {
+  font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase;
+  color:var(--muted); margin-bottom:8px; display:flex; align-items:center; gap:6px;
+}
+.sb-section-label::after { content:''; flex:1; height:1px; background:var(--border); }
+ 
+/* Filter controls */
+.sb-ctrl { margin-bottom:12px; }
+.sb-ctrl label { font-size:11px; font-weight:600; color:var(--text2); display:block; margin-bottom:5px; }
+.sb-select {
+  width:100%; padding:8px 10px; border:1.5px solid var(--border); border-radius:9px;
+  font-family:var(--font); font-size:12px; color:var(--text); background:var(--bg3);
+  cursor:pointer; outline:none; transition:border-color .18s;
+}
+.sb-select:focus { border-color:var(--blue); }
+ 
+.sb-toggle {
+  display:flex; align-items:center; gap:8px; padding:9px 12px;
+  background:var(--bg3); border:1.5px solid var(--border); border-radius:9px;
+  cursor:pointer; transition:all .18s; user-select:none;
+}
+.sb-toggle:hover { border-color:var(--blue); }
+.sb-toggle.active { background:var(--grn-lt); border-color:var(--green); }
+.sb-toggle input { display:none; }
+.sb-toggle-dot {
+  width:32px; height:18px; background:#D1D5DB; border-radius:99px; position:relative;
+  transition:background .2s; flex-shrink:0;
+}
+.sb-toggle-dot::after {
+  content:''; position:absolute; left:2px; top:2px;
+  width:14px; height:14px; border-radius:50%; background:#fff;
+  transition:transform .2s; box-shadow:0 1px 3px rgba(0,0,0,.2);
+}
+.sb-toggle.active .sb-toggle-dot { background:var(--green); }
+.sb-toggle.active .sb-toggle-dot::after { transform:translateX(14px); }
+.sb-toggle-txt { font-size:11px; font-weight:600; color:var(--text2); line-height:1.3; }
+ 
+/* Branch drill-down panel */
+.sb-drill {
+  background:linear-gradient(135deg,var(--ind-lt),var(--vio-lt));
+  border:1.5px solid #C7D2FE; border-radius:10px;
+  padding:12px; margin-bottom:12px; display:none;
+}
+.sb-drill.show { display:block; }
+.sb-drill-title { font-size:10px; font-weight:700; color:var(--indigo); margin-bottom:8px; text-transform:uppercase; letter-spacing:1px; }
+.sb-drill-branch {
+  font-size:13px; font-weight:800; color:var(--text);
+  padding:8px 10px; background:var(--bg2); border-radius:8px;
+  border:1.5px solid #C7D2FE; margin-bottom:8px;
   display:flex; align-items:center; justify-content:space-between;
-  box-shadow:0 8px 32px rgba(59,82,246,.25);
-  position:relative; overflow:hidden;
 }
-.header::before {
-  content:''; position:absolute; inset:0;
-  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='28'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  pointer-events:none;
+.sb-drill-close { cursor:pointer; color:var(--rose); font-size:16px; line-height:1; }
+.sb-drill-stats { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; }
+.sb-drill-stat { background:var(--bg2); border-radius:8px; padding:8px; text-align:center; }
+.sb-drill-stat-val { font-size:18px; font-weight:800; }
+.sb-drill-stat-lbl { font-size:9px; color:var(--muted); font-family:var(--mono); margin-top:2px; }
+ 
+/* Sidebar refresh */
+.sb-refresh-wrap { padding:16px; margin-top:auto; border-top:1px solid var(--border); }
+.sb-refresh-btn {
+  width:100%; padding:9px; background:var(--blue); color:#fff;
+  border:none; border-radius:9px; font-family:var(--font); font-size:12px; font-weight:700;
+  cursor:pointer; transition:background .18s; display:flex; align-items:center; justify-content:center; gap:6px;
 }
-.hdr-left { position:relative; }
-.hdr-eyebrow { font-size:11px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,.55); margin-bottom:6px; font-family:var(--mono); }
-.hdr-title { font-size:24px; font-weight:800; color:#fff; letter-spacing:-.3px; line-height:1.15; }
+.sb-refresh-btn:hover { background:#2563EB; }
+.sb-ts { font-family:var(--mono); font-size:10px; color:var(--muted); text-align:center; margin-top:8px; }
+.sb-ts b { color:var(--blue); }
+.sb-countdown { font-family:var(--mono); font-size:10px; color:var(--muted); text-align:center; margin-top:4px; }
+.sb-countdown span { color:var(--amber); font-weight:600; }
+ 
+/* ─── MAIN CONTENT ─── */
+.main { margin-left:var(--sb-w); flex:1; padding:20px 22px 48px; min-width:0; }
+ 
+/* ─── HEADER ─── */
+.hdr {
+  background:linear-gradient(135deg,#1E3A8A 0%,#3B4FCB 55%,#6D28D9 100%);
+  border-radius:18px; padding:22px 28px; margin-bottom:20px;
+  display:flex; align-items:center; justify-content:space-between;
+  box-shadow:0 8px 32px rgba(59,82,246,.22); position:relative; overflow:hidden;
+}
+.hdr::before {
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(ellipse 50% 80% at 90% 50%,rgba(255,255,255,.06),transparent);
+}
+.hdr-title  { font-size:22px; font-weight:800; color:#fff; letter-spacing:-.3px; }
 .hdr-title span { color:#93C5FD; }
-.hdr-sub { font-size:12px; color:rgba(255,255,255,.6); margin-top:6px; font-family:var(--mono); }
-.hdr-right { display:flex; align-items:center; gap:12px; position:relative; }
-.hdr-stat { background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.18); border-radius:12px; padding:10px 16px; text-align:center; }
-.hdr-stat-val { font-size:22px; font-weight:800; color:#fff; line-height:1; }
-.hdr-stat-lbl { font-size:10px; color:rgba(255,255,255,.6); margin-top:3px; font-family:var(--mono); }
-.refresh-btn {
-  background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.25);
-  color:#fff; font-family:var(--font); font-size:12px; font-weight:600;
-  padding:9px 16px; border-radius:10px; cursor:pointer; transition:all .2s;
-  display:flex; align-items:center; gap:6px;
-}
-.refresh-btn:hover { background:rgba(255,255,255,.25); }
-.countdown-pill {
-  background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2);
-  border-radius:10px; padding:8px 14px;
-  font-family:var(--mono); font-size:11px; color:rgba(255,255,255,.7);
-}
-.countdown-pill span { color:#93C5FD; font-weight:600; }
-.ts-pill {
-  background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2);
-  border-radius:10px; padding:8px 14px;
-  font-family:var(--mono); font-size:11px; color:rgba(255,255,255,.7);
-}
-.ts-pill b { color:#86EFAC; }
-
-/* ── GLOBAL FILTER BAR ── */
-.filter-bar {
-  display:flex; align-items:center; gap:10px; margin-bottom:20px;
-  background:var(--bg2); border:1px solid var(--border); border-radius:14px;
-  padding:12px 20px; box-shadow:var(--shadow);
-}
-.filter-label { font-size:12px; font-weight:700; color:var(--text2); margin-right:4px; }
-.filter-btn {
-  padding:7px 18px; border-radius:99px; border:1.5px solid var(--border);
-  font-family:var(--font); font-size:12px; font-weight:600; cursor:pointer;
-  transition:all .18s; background:var(--bg3); color:var(--text2);
-}
-.filter-btn.active {
-  background:var(--blue); border-color:var(--blue); color:#fff;
-  box-shadow:0 4px 12px rgba(59,130,246,.25);
-}
-.filter-sep { width:1px; height:24px; background:var(--border); margin:0 6px; }
-.last-updated { margin-left:auto; font-family:var(--mono); font-size:11px; color:var(--muted); }
-.last-updated b { color:var(--blue); }
-
-/* ── TODAY BANNER ── */
+.hdr-sub    { font-size:11px; color:rgba(255,255,255,.6); font-family:var(--mono); margin-top:5px; }
+.hdr-pills  { display:flex; gap:10px; }
+.hdr-pill   { background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.2); border-radius:12px; padding:10px 16px; text-align:center; }
+.hdr-pill-v { font-size:22px; font-weight:800; color:#fff; line-height:1; }
+.hdr-pill-l { font-size:9px; color:rgba(255,255,255,.6); font-family:var(--mono); margin-top:3px; }
+ 
+/* ─── TODAY BANNER ─── */
 .today-banner {
-  background:linear-gradient(135deg,#ECFDF5,#F0FDF4);
-  border:1.5px solid #86EFAC; border-radius:14px;
-  padding:14px 20px; margin-bottom:20px;
-  display:none; align-items:center; gap:12px;
+  background:linear-gradient(135deg,#ECFDF5,#D1FAE5); border:1.5px solid #6EE7B7;
+  border-radius:12px; padding:12px 18px; margin-bottom:16px;
+  display:none; align-items:center; gap:10px;
 }
 .today-banner.show { display:flex; }
-.today-dot { width:10px; height:10px; border-radius:50%; background:var(--green); animation:pulse 1.5s ease infinite; }
+.live-dot { width:9px; height:9px; border-radius:50%; background:var(--green); animation:pulse 1.4s ease infinite; }
 @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.4)} 50%{box-shadow:0 0 0 6px rgba(34,197,94,0)} }
-.today-txt { font-size:13px; font-weight:600; color:#166534; }
-.today-txt span { font-family:var(--mono); color:#15803D; }
-
-/* ── SECTION ── */
-.sec-hdr { display:flex; align-items:center; gap:10px; margin:24px 0 14px; }
-.sec-icon { width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:15px; }
-.sec-title { font-size:15px; font-weight:800; color:var(--text); }
-.sec-sub { font-size:11px; color:var(--muted); font-family:var(--mono); margin-left:4px; }
-.sec-line { flex:1; height:1px; background:var(--border); }
-
-/* ── KPI GRID ── */
-.kpi-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; }
+.today-txt { font-size:13px; font-weight:700; color:#065F46; }
+.today-txt span { font-family:var(--mono); }
+ 
+/* ─── ERROR BAR ─── */
+.err-bar { background:#FFF1F2; border:1.5px solid #FECDD3; border-radius:10px; padding:11px 16px; color:#BE123C; font-size:12px; margin-bottom:14px; display:none; }
+ 
+/* ─── SECTION HEADER ─── */
+.sec { display:flex; align-items:center; gap:10px; margin:22px 0 13px; }
+.sec-icon { width:28px; height:28px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
+.sec-title { font-size:14px; font-weight:800; }
+.sec-sub   { font-size:10px; color:var(--muted); font-family:var(--mono); }
+.sec-line  { flex:1; height:1px; background:var(--border); }
+ 
+/* ─── KPI GRID ─── */
+.kpi-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:11px; }
 .kpi {
-  background:var(--bg2); border:1px solid var(--border); border-radius:16px;
-  padding:16px 18px; position:relative; overflow:hidden;
-  box-shadow:var(--shadow); transition:transform .2s, box-shadow .2s;
+  background:var(--bg2); border:1px solid var(--border); border-radius:14px;
+  padding:15px 17px; position:relative; overflow:hidden;
+  box-shadow:var(--shadow); transition:transform .18s,box-shadow .18s;
   animation:fadeUp .4s ease both;
 }
-.kpi:hover { transform:translateY(-3px); box-shadow:var(--shadow-lg); }
-.kpi-stripe { position:absolute; top:0; left:0; right:0; height:3px; border-radius:16px 16px 0 0; }
-.kpi-icon-wrap { width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; margin-bottom:12px; }
-.kpi-lbl { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin-bottom:5px; }
-.kpi-val { font-size:24px; font-weight:800; line-height:1; color:var(--text); }
-.kpi-val.sm { font-size:15px; }
-.kpi-sub { font-size:10px; color:var(--muted); margin-top:6px; font-family:var(--mono); }
-.kpi-badge { display:inline-block; font-size:10px; font-weight:700; padding:2px 8px; border-radius:99px; margin-top:5px; }
-
-/* ── CHARTS ── */
-.grid2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
-.grid3 { display:grid; grid-template-columns:2fr 1fr 1fr; gap:14px; }
-.grid32 { display:grid; grid-template-columns:3fr 2fr; gap:14px; }
-
+.kpi:hover { transform:translateY(-3px); box-shadow:var(--shadow-md); }
+.kpi-stripe { position:absolute; top:0; left:0; right:0; height:3px; border-radius:14px 14px 0 0; }
+.kpi-icon  { width:34px; height:34px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:16px; margin-bottom:11px; }
+.kpi-lbl   { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1.2px; color:var(--muted); margin-bottom:5px; }
+.kpi-val   { font-size:22px; font-weight:800; line-height:1.1; }
+.kpi-val.sm{ font-size:14px; }
+.kpi-sub   { font-size:9px; color:var(--muted); margin-top:5px; font-family:var(--mono); }
+ 
+/* ─── TOP/BOT GRID ─── */
+.tb-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:11px; }
+.tb-card {
+  background:var(--bg2); border:1px solid var(--border); border-radius:14px;
+  padding:15px 17px; box-shadow:var(--shadow); position:relative; overflow:hidden;
+  animation:fadeUp .45s ease both;
+}
+.tb-accent { position:absolute; top:0; right:0; bottom:0; width:4px; border-radius:0 14px 14px 0; }
+.tb-badge  { font-size:9px; font-weight:700; padding:3px 9px; border-radius:99px; display:inline-block; margin-bottom:9px; }
+.tb-name   { font-size:16px; font-weight:800; margin-bottom:3px; }
+.tb-branch { font-size:10px; color:var(--muted); font-family:var(--mono); margin-bottom:11px; }
+.tb-stats  { display:flex; gap:10px; }
+.tb-sv     { font-size:18px; font-weight:800; }
+.tb-sl     { font-size:9px; color:var(--muted); font-family:var(--mono); }
+ 
+/* ─── CHART CARDS ─── */
+.grid2  { display:grid; grid-template-columns:1fr 1fr; gap:13px; }
+.grid21 { display:grid; grid-template-columns:2fr 1fr; gap:13px; }
+.grid3  { display:grid; grid-template-columns:1fr 1fr 1fr; gap:13px; }
 .card {
-  background:var(--bg2); border:1px solid var(--border); border-radius:16px;
-  padding:20px 22px; box-shadow:var(--shadow); animation:fadeUp .45s ease both;
+  background:var(--bg2); border:1px solid var(--border); border-radius:14px;
+  padding:18px 20px; box-shadow:var(--shadow); animation:fadeUp .45s ease both;
 }
-.card-hdr { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:16px; }
-.card-title { font-size:14px; font-weight:800; color:var(--text); }
-.card-sub { font-size:10px; color:var(--muted); font-family:var(--mono); margin-top:2px; }
-.card-tag {
-  font-size:10px; font-weight:700; padding:4px 10px; border-radius:99px;
-  background:var(--blue-lt); color:var(--blue); white-space:nowrap;
+.card-hdr { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:14px; gap:8px; }
+.card-title{ font-size:13px; font-weight:800; }
+.card-sub  { font-size:10px; color:var(--muted); font-family:var(--mono); margin-top:2px; }
+.card-tag  { font-size:9px; font-weight:700; padding:3px 9px; border-radius:99px; background:var(--blue-lt); color:var(--blue); white-space:nowrap; flex-shrink:0; }
+ 
+/* Branch selector in chart card */
+.card-filter {
+  display:flex; align-items:center; gap:8px; margin-bottom:12px;
+  background:var(--bg3); border:1px solid var(--border); border-radius:9px; padding:8px 12px;
 }
-
-/* ── HEATMAP ── */
-.hmap { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+.card-filter label { font-size:11px; font-weight:600; color:var(--text2); white-space:nowrap; }
+.card-filter select {
+  flex:1; border:none; background:transparent; font-family:var(--font); font-size:12px;
+  color:var(--text); cursor:pointer; outline:none;
+}
+ 
+/* ─── DRILL-DOWN VIEW ─── */
+.drill-view {
+  background:linear-gradient(135deg,var(--ind-lt),var(--vio-lt));
+  border:1.5px solid #C7D2FE; border-radius:14px;
+  padding:18px 20px; margin-bottom:14px; display:none; animation:fadeUp .3s ease both;
+}
+.drill-view.show { display:block; }
+.drill-hdr { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+.drill-title { font-size:14px; font-weight:800; color:var(--indigo); }
+.drill-close {
+  background:var(--ros-lt); border:1.5px solid #FECDD3; color:var(--rose);
+  font-size:11px; font-weight:700; padding:5px 12px; border-radius:99px; cursor:pointer;
+  font-family:var(--font); transition:background .18s;
+}
+.drill-close:hover { background:#FFE4E6; }
+ 
+/* ─── HEATMAP ─── */
+.hmap { display:grid; grid-template-columns:repeat(3,1fr); gap:7px; }
 .hmap-cell {
-  border-radius:12px; padding:12px 10px; text-align:center;
-  cursor:default; transition:transform .18s, box-shadow .18s; border:1.5px solid transparent;
+  border-radius:10px; padding:11px 9px; text-align:center;
+  cursor:pointer; transition:transform .18s,box-shadow .18s; border:1.5px solid transparent;
 }
-.hmap-cell:hover { transform:scale(1.04); box-shadow:0 4px 16px rgba(0,0,0,.1); z-index:5; }
-.hmap-name { font-size:9px; font-weight:700; margin-bottom:4px; }
-.hmap-count { font-size:20px; font-weight:800; }
-.hmap-rate { font-size:9px; font-family:var(--mono); margin-top:2px; }
-
-/* ── LEADERBOARD ── */
-.lb-wrap { display:flex; flex-direction:column; gap:5px; max-height:380px; overflow-y:auto; padding-right:2px; }
+.hmap-cell:hover { transform:scale(1.05); box-shadow:0 4px 14px rgba(0,0,0,.1); z-index:5; }
+.hmap-cell.selected { border-color:#6366F1 !important; box-shadow:0 0 0 3px rgba(99,102,241,.2); }
+.hmap-name  { font-size:9px; font-weight:700; margin-bottom:4px; }
+.hmap-count { font-size:19px; font-weight:800; }
+.hmap-rate  { font-size:9px; font-family:var(--mono); margin-top:2px; }
+ 
+/* ─── LEADERBOARD ─── */
+.lb-wrap { display:flex; flex-direction:column; gap:5px; max-height:360px; overflow-y:auto; padding-right:2px; }
 .lb-wrap::-webkit-scrollbar { width:3px; }
 .lb-wrap::-webkit-scrollbar-thumb { background:var(--border); border-radius:99px; }
 .lb-row {
-  display:flex; align-items:center; gap:9px; padding:9px 12px;
-  border-radius:10px; border:1px solid var(--border); background:var(--bg3);
-  transition:all .15s;
+  display:flex; align-items:center; gap:8px; padding:8px 10px;
+  border-radius:9px; border:1px solid var(--border); background:var(--bg3); transition:all .15s;
 }
 .lb-row:hover { background:var(--bg2); box-shadow:var(--shadow); }
-.lb-rank { font-size:14px; min-width:22px; text-align:center; }
+.lb-rank { font-size:13px; min-width:20px; text-align:center; }
 .lb-info { flex:1; min-width:0; }
-.lb-name { font-size:12px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.lb-branch { font-size:10px; color:var(--muted); font-family:var(--mono); }
-.lb-bar-bg { height:5px; background:#E2E8F4; border-radius:99px; overflow:hidden; width:64px; }
-.lb-bar { height:100%; border-radius:99px; }
-.lb-num { font-size:12px; font-weight:700; font-family:var(--mono); color:var(--blue); min-width:26px; text-align:right; }
-.lb-pct { font-size:10px; font-family:var(--mono); min-width:32px; text-align:right; }
-
-/* ── FUNNEL ── */
-.funnel-body { display:flex; flex-direction:column; align-items:center; gap:4px; padding-top:8px; }
-.f-stage {
-  border-radius:10px; border:1.5px solid; padding:13px 18px;
-  display:flex; align-items:center; justify-content:space-between; transition:opacity .2s;
-}
+.lb-name   { font-size:11px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.lb-branch { font-size:9px; color:var(--muted); font-family:var(--mono); }
+.lb-bar-bg { width:56px; height:5px; background:#E2E8F4; border-radius:99px; overflow:hidden; }
+.lb-bar    { height:100%; border-radius:99px; }
+.lb-num    { font-size:11px; font-weight:700; font-family:var(--mono); color:var(--blue); min-width:24px; text-align:right; }
+.lb-pct    { font-size:9px; font-family:var(--mono); min-width:30px; text-align:right; }
+ 
+/* ─── FUNNEL ─── */
+.funnel-wrap { display:flex; flex-direction:column; align-items:center; gap:3px; padding:8px 0; }
+.f-stage { border-radius:9px; border:1.5px solid; padding:11px 14px; display:flex; align-items:center; justify-content:space-between; transition:opacity .18s; }
 .f-stage:hover { opacity:.85; }
-.f-lbl { font-size:13px; font-weight:700; }
-.f-sub { font-size:10px; font-family:var(--mono); margin-top:2px; }
-.f-num { font-size:26px; font-weight:800; font-family:var(--mono); }
-.f-drop { font-size:10px; font-family:var(--mono); color:var(--rose); display:flex; align-items:center; gap:4px; }
-
-/* ── TOP/BOT CARDS ── */
-.topbot-grid { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:12px; }
-.tb-card {
-  background:var(--bg2); border:1px solid var(--border); border-radius:14px;
-  padding:16px 18px; box-shadow:var(--shadow); position:relative; overflow:hidden;
-  animation:fadeUp .5s ease both;
-}
-.tb-badge { font-size:10px; font-weight:700; padding:3px 10px; border-radius:99px; display:inline-block; margin-bottom:10px; }
-.tb-name { font-size:17px; font-weight:800; color:var(--text); margin-bottom:4px; }
-.tb-branch { font-size:11px; color:var(--muted); font-family:var(--mono); margin-bottom:12px; }
-.tb-stats { display:flex; gap:12px; }
-.tb-stat { text-align:center; }
-.tb-stat-val { font-size:20px; font-weight:800; }
-.tb-stat-lbl { font-size:9px; font-family:var(--mono); color:var(--muted); }
-.tb-accent { position:absolute; top:0; right:0; bottom:0; width:4px; border-radius:0 14px 14px 0; }
-
-/* ── TODAY SNAPSHOT ── */
-.today-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:10px; }
+.f-lbl { font-size:12px; font-weight:700; }
+.f-sub { font-size:9px; font-family:var(--mono); margin-top:2px; }
+.f-num { font-size:22px; font-weight:800; font-family:var(--mono); }
+.f-drop { font-size:9px; font-family:var(--mono); color:var(--rose); align-self:flex-start; margin-left:8px; }
+ 
+/* ─── TODAY SNAPSHOT ─── */
+.today-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:9px; }
 .today-cell {
-  background:var(--bg2); border:1px solid var(--border); border-radius:12px;
-  padding:14px; text-align:center; box-shadow:var(--shadow); transition:transform .18s;
-  animation:fadeUp .4s ease both;
+  background:var(--bg2); border:1px solid var(--border); border-radius:11px;
+  padding:13px 11px; text-align:center; box-shadow:var(--shadow); transition:transform .18s;
+  animation:fadeUp .38s ease both;
 }
 .today-cell:hover { transform:translateY(-2px); }
-.today-cell-name { font-size:11px; font-weight:700; color:var(--text2); margin-bottom:8px; }
-.today-cell-num { font-size:28px; font-weight:800; }
-.today-cell-conv { font-size:10px; font-family:var(--mono); margin-top:3px; }
-
-/* ── INSIGHTS ── */
-.ins-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.today-cell-name { font-size:10px; font-weight:700; color:var(--text2); margin-bottom:7px; }
+.today-cell-num  { font-size:26px; font-weight:800; }
+.today-cell-conv { font-size:9px; font-family:var(--mono); color:var(--muted); margin-top:3px; }
+ 
+/* ─── EMPTY STATE ─── */
+.empty-state {
+  text-align:center; padding:32px 20px; color:var(--muted);
+  font-family:var(--mono); font-size:12px;
+  background:var(--bg3); border:1.5px dashed var(--border); border-radius:12px;
+}
+.empty-state .empty-icon { font-size:32px; margin-bottom:10px; }
+.empty-state .empty-title { font-size:14px; font-weight:700; color:var(--text2); margin-bottom:6px; font-family:var(--font); }
+ 
+/* ─── INSIGHTS ─── */
+.ins-grid { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
 .ins-card {
-  background:var(--bg2); border:1px solid var(--border); border-radius:12px;
-  padding:13px 16px; display:flex; gap:11px; align-items:flex-start;
-  box-shadow:var(--shadow); transition:border-color .18s; animation:fadeUp .5s ease both;
+  background:var(--bg2); border:1px solid var(--border); border-radius:11px;
+  padding:12px 14px; display:flex; gap:10px; box-shadow:var(--shadow);
+  transition:border-color .18s; animation:fadeUp .45s ease both;
 }
 .ins-card:hover { border-color:var(--blue); }
-.ins-n { font-size:10px; font-weight:700; font-family:var(--mono); color:var(--blue); min-width:20px; opacity:.6; margin-top:2px; }
-.ins-txt { font-size:12.5px; line-height:1.6; color:var(--text2); }
-.ins-txt b { color:var(--text); font-weight:700; }
-.ins-txt .hi { color:var(--green); font-weight:700; }
-.ins-txt .warn { color:var(--rose); font-weight:700; }
-.ins-txt .info { color:var(--blue); font-weight:700; }
-
-/* ── ERROR ── */
-.err-bar {
-  background:#FFF1F2; border:1.5px solid #FECDD3; border-radius:12px;
-  padding:12px 18px; color:#BE123C; font-size:13px; margin-bottom:16px; display:none;
-}
-
-/* ── FOOTER ── */
-.footer {
-  text-align:center; margin-top:32px; padding-top:20px;
-  border-top:1px solid var(--border);
-  font-family:var(--mono); font-size:11px; color:var(--muted);
-}
-
-@keyframes fadeUp {
-  from { opacity:0; transform:translateY(12px); }
-  to   { opacity:1; transform:translateY(0); }
-}
-
-/* ── RESPONSIVE ── */
-@media(max-width:1300px) {
-  .kpi-grid { grid-template-columns:repeat(4,1fr); }
-  .topbot-grid { grid-template-columns:1fr 1fr; }
-  .grid3 { grid-template-columns:1fr 1fr; }
-}
-@media(max-width:900px) {
-  .kpi-grid { grid-template-columns:repeat(3,1fr); }
-  .grid2,.grid32,.grid3 { grid-template-columns:1fr; }
-  .ins-grid { grid-template-columns:1fr; }
-  .topbot-grid { grid-template-columns:1fr; }
-}
-@media(max-width:560px) { .kpi-grid { grid-template-columns:1fr 1fr; } }
+.ins-n   { font-size:9px; font-weight:700; font-family:var(--mono); color:var(--blue); min-width:18px; opacity:.6; margin-top:2px; }
+.ins-txt { font-size:12px; line-height:1.6; color:var(--text2); }
+.ins-txt b    { color:var(--text); font-weight:700; }
+.ins-txt .hi  { color:var(--green); font-weight:700; }
+.ins-txt .warn{ color:var(--rose); font-weight:700; }
+.ins-txt .info{ color:var(--blue); font-weight:700; }
+ 
+.footer { text-align:center; margin-top:28px; padding-top:18px; border-top:1px solid var(--border); font-family:var(--mono); font-size:10px; color:var(--muted); }
+ 
+@keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+ 
+/* ─── RESPONSIVE ─── */
+@media(max-width:1300px){ .kpi-grid{grid-template-columns:repeat(4,1fr)} .tb-grid{grid-template-columns:1fr 1fr} }
+@media(max-width:1000px){ .grid2,.grid21,.grid3{grid-template-columns:1fr} .main{margin-left:0} .sidebar{display:none} }
+@media(max-width:700px) { .kpi-grid{grid-template-columns:repeat(2,1fr)} .ins-grid{grid-template-columns:1fr} }
 </style>
 </head>
 <body>
-
-<!-- LOADING -->
+ 
+<!-- LOADER -->
 <div id="loader">
   <div class="spin"></div>
   <div class="load-bar-wrap"><div class="load-bar"></div></div>
   <div class="load-txt">Fetching live data from Google Sheets…</div>
 </div>
-
-<div class="page">
-
+ 
+<!-- ═══════════════════ SIDEBAR ═══════════════════ -->
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-logo-title">📊 Sales Intelligence</div>
+    <div class="sb-logo-sub">Live · May-26 · L2 Master Sheet</div>
+  </div>
+ 
+  <div class="sb-section">
+    <div class="sb-section-label">Filters</div>
+ 
+    <!-- Month Filter -->
+    <div class="sb-ctrl">
+      <label>📅 Month</label>
+      <select class="sb-select" id="monthSel" onchange="onMonthChange()">
+        <option value="">Loading…</option>
+      </select>
+    </div>
+ 
+    <!-- Today Toggle -->
+    <div class="sb-ctrl">
+      <label>⚡ Realtime View</label>
+      <div class="sb-toggle" id="todayToggle" onclick="toggleToday()">
+        <input type="checkbox" id="todayChk">
+        <div class="sb-toggle-dot"></div>
+        <div class="sb-toggle-txt">View Today's Data Only</div>
+      </div>
+    </div>
+ 
+    <!-- Branch Filter -->
+    <div class="sb-ctrl">
+      <label>🏢 Branch Filter</label>
+      <select class="sb-select" id="branchSel" onchange="onBranchChange()">
+        <option value="">All Branches</option>
+      </select>
+    </div>
+ 
+    <!-- Drill-Down Panel -->
+    <div class="sb-drill" id="drillPanel">
+      <div class="sb-drill-title">🔍 Branch Drill-Down</div>
+      <div class="sb-drill-branch">
+        <span id="drillBranchName">—</span>
+        <span class="sb-drill-close" onclick="clearDrill()">✕</span>
+      </div>
+      <div class="sb-drill-stats">
+        <div class="sb-drill-stat">
+          <div class="sb-drill-stat-val" id="drillTotal" style="color:var(--blue)">—</div>
+          <div class="sb-drill-stat-lbl">Prospects</div>
+        </div>
+        <div class="sb-drill-stat">
+          <div class="sb-drill-stat-val" id="drillConv" style="color:var(--green)">—</div>
+          <div class="sb-drill-stat-lbl">Converted</div>
+        </div>
+        <div class="sb-drill-stat">
+          <div class="sb-drill-stat-val" id="drillRate" style="color:var(--violet)">—</div>
+          <div class="sb-drill-stat-lbl">Rate</div>
+        </div>
+      </div>
+    </div>
+  </div>
+ 
+  <div class="sb-refresh-wrap">
+    <button class="sb-refresh-btn" onclick="refreshData()">↻ Refresh Now</button>
+    <div class="sb-ts">Updated: <b id="lastTs">—</b></div>
+    <div class="sb-countdown">Next: <span id="cdTimer">05:00</span></div>
+  </div>
+</aside>
+ 
+<!-- ═══════════════════ MAIN ═══════════════════ -->
+<main class="main">
+ 
   <!-- HEADER -->
-  <div class="header">
-    <div class="hdr-left">
-      <div class="hdr-eyebrow">📊 Live Intelligence Platform</div>
-      <div class="hdr-title">Sales Projection &amp; <span>Conversion</span> Dashboard</div>
-      <div class="hdr-sub" id="hdrSub">Initialising live data feed…</div>
+  <div class="hdr">
+    <div>
+      <div class="hdr-title">Sales Projection &amp; <span>Conversion</span> Intelligence</div>
+      <div class="hdr-sub" id="hdrSub">Initialising…</div>
     </div>
-    <div class="hdr-right">
-      <div class="hdr-stat"><div class="hdr-stat-val" id="hdrTotal">—</div><div class="hdr-stat-lbl">Total Prospects</div></div>
-      <div class="hdr-stat"><div class="hdr-stat-val" id="hdrConv">—</div><div class="hdr-stat-lbl">Conversions</div></div>
-      <div class="hdr-stat"><div class="hdr-stat-val" id="hdrRate">—</div><div class="hdr-stat-lbl">Conv. Rate</div></div>
-      <div style="display:flex;flex-direction:column;gap:6px">
-        <button class="refresh-btn" onclick="refreshData()">↻ Refresh</button>
-        <div class="countdown-pill">Next: <span id="cdTimer">05:00</span></div>
-        <div class="ts-pill">Updated: <b id="lastTs">—</b></div>
-      </div>
+    <div class="hdr-pills">
+      <div class="hdr-pill"><div class="hdr-pill-v" id="hdrTotal">—</div><div class="hdr-pill-l">Prospects</div></div>
+      <div class="hdr-pill"><div class="hdr-pill-v" id="hdrConv">—</div><div class="hdr-pill-l">Converted</div></div>
+      <div class="hdr-pill"><div class="hdr-pill-v" id="hdrRate">—</div><div class="hdr-pill-l">Conv Rate</div></div>
     </div>
   </div>
-
-  <!-- ERROR -->
+ 
   <div class="err-bar" id="errBar"></div>
-
-  <!-- GLOBAL FILTER BAR -->
-  <div class="filter-bar">
-    <span class="filter-label">📅 Data View:</span>
-    <button class="filter-btn active" id="btnMay" onclick="setFilter('may')">May-26 Full Month</button>
-    <button class="filter-btn" id="btnToday" onclick="setFilter('today')">Today Only</button>
-    <div class="filter-sep"></div>
-    <span style="font-size:12px;color:var(--muted);font-family:var(--mono)">All charts &amp; insights update with this filter</span>
-    <div class="last-updated">Last fetched: <b id="fetchTs">—</b></div>
-  </div>
-
-  <!-- TODAY LIVE BANNER -->
   <div class="today-banner" id="todayBanner">
-    <div class="today-dot"></div>
-    <div class="today-txt">🔴 LIVE — Showing Today's Prospects Only &nbsp;·&nbsp; Date: <span id="todayDateTxt"></span></div>
+    <div class="live-dot"></div>
+    <div class="today-txt">🔴 LIVE — Showing Today's Prospects Only &nbsp;·&nbsp; <span id="todayDateTxt"></span></div>
   </div>
-
+ 
   <!-- §01 KPIs -->
-  <div class="sec-hdr">
-    <div class="sec-icon" style="background:#EFF6FF">📌</div>
-    <div class="sec-title">Executive Summary</div>
-    <div class="sec-sub" id="kpiPeriodLabel">— May-26</div>
-    <div class="sec-line"></div>
-  </div>
+  <div class="sec"><div class="sec-icon" style="background:#EFF6FF">📌</div><div class="sec-title">Executive Summary</div><div class="sec-sub" id="kpiLbl">— May-26</div><div class="sec-line"></div></div>
   <div class="kpi-grid" id="kpiGrid"></div>
-
-  <!-- §02 TOP / BOTTOM PERFORMERS -->
-  <div class="sec-hdr" style="margin-top:24px">
-    <div class="sec-icon" style="background:#F0FDF4">🏆</div>
-    <div class="sec-title">Top &amp; Bottom Performers</div>
-    <div class="sec-sub" id="tbPeriodLabel">— May-26</div>
-    <div class="sec-line"></div>
+ 
+  <!-- §02 Top/Bottom -->
+  <div class="sec" style="margin-top:20px"><div class="sec-icon" style="background:#F0FDF4">🏆</div><div class="sec-title">Top &amp; Bottom Performers</div><div class="sec-sub" id="tbLbl">— May-26</div><div class="sec-line"></div></div>
+  <div class="tb-grid" id="tbGrid"></div>
+ 
+  <!-- §03 Branch Analytics -->
+  <div class="sec" style="margin-top:20px"><div class="sec-icon" style="background:#EEF2FF">🏢</div><div class="sec-title">Branch Analytics</div><div class="sec-sub" id="branchLbl">— May-26</div><div class="sec-line"></div></div>
+ 
+  <!-- Drill-down TL view -->
+  <div class="drill-view" id="drillView">
+    <div class="drill-hdr">
+      <div class="drill-title" id="drillViewTitle">TL Breakdown — Branch</div>
+      <button class="drill-close" onclick="clearDrill()">✕ Clear Branch Filter</button>
+    </div>
+    <canvas id="cDrill" height="160"></canvas>
   </div>
-  <div class="topbot-grid" id="topBotGrid"></div>
-
-  <!-- §03 BRANCH ANALYTICS -->
-  <div class="sec-hdr" style="margin-top:24px">
-    <div class="sec-icon" style="background:#EEF2FF">🏢</div>
-    <div class="sec-title">Branch Analytics</div>
-    <div class="sec-sub" id="branchPeriodLabel">— May-26</div>
-    <div class="sec-line"></div>
-  </div>
-  <div class="grid2">
+ 
+  <div class="grid2" style="margin-bottom:13px">
     <div class="card">
       <div class="card-hdr">
-        <div><div class="card-title">Branch-wise Prospect Count</div><div class="card-sub">Sorted highest → lowest · Red=low, Green=high</div></div>
-        <div class="card-tag" id="tagBranch1">May-26</div>
+        <div><div class="card-title">Chart 1 — Branch-wise Prospect Count</div><div class="card-sub">Click a branch bar to drill down into TL view</div></div>
+        <div class="card-tag" id="tag1">May-26</div>
       </div>
-      <canvas id="cBranch" height="280"></canvas>
+      <canvas id="cBranch" height="260"></canvas>
     </div>
     <div class="card">
       <div class="card-hdr">
-        <div><div class="card-title">Branch-wise Conversion Rate %</div><div class="card-sub">Top 3 → green · Bottom 3 → amber/red</div></div>
-        <div class="card-tag" id="tagBranch2">May-26</div>
+        <div><div class="card-title">Chart 2 — Branch Conversion Rate %</div><div class="card-sub">Top 3 green · Bottom 3 red · Labels on bars</div></div>
+        <div class="card-tag" id="tag2">May-26</div>
       </div>
-      <canvas id="cConv" height="280"></canvas>
+      <canvas id="cConv" height="260"></canvas>
     </div>
   </div>
-
-  <!-- §04 TL ANALYTICS -->
-  <div class="sec-hdr" style="margin-top:20px">
-    <div class="sec-icon" style="background:#F5F3FF">👥</div>
-    <div class="sec-title">Team Leader Analytics</div>
-    <div class="sec-sub" id="tlPeriodLabel">— May-26</div>
-    <div class="sec-line"></div>
-  </div>
-  <div class="grid32">
+ 
+  <!-- §04 TL Analytics -->
+  <div class="sec" style="margin-top:4px"><div class="sec-icon" style="background:#F5F3FF">👥</div><div class="sec-title">Team Leader Analytics</div><div class="sec-sub" id="tlLbl">— May-26</div><div class="sec-line"></div></div>
+  <div class="grid21" style="margin-bottom:13px">
     <div class="card">
       <div class="card-hdr">
-        <div><div class="card-title">TL-wise Prospect Count</div><div class="card-sub">Top TLs · Name + Branch on axis</div></div>
-        <div class="card-tag" id="tagTL">May-26</div>
+        <div><div class="card-title">Chart 3 — TL-wise Prospect Count</div><div class="card-sub">Top TLs · Name + Branch · Value labels visible</div></div>
+        <div class="card-tag" id="tag3">May-26</div>
       </div>
-      <canvas id="cTL" height="320"></canvas>
+      <canvas id="cTL" height="300"></canvas>
     </div>
     <div class="card">
       <div class="card-hdr">
-        <div><div class="card-title">TL Conversion Rate %</div><div class="card-sub">Top 15 TLs by conversion performance</div></div>
-        <div class="card-tag" id="tagTLConv">May-26</div>
+        <div><div class="card-title">Chart 4 — TL Conversion Rate %</div><div class="card-sub">Min 2 prospects · Colour = performance tier</div></div>
+        <div class="card-tag" id="tag4">May-26</div>
       </div>
-      <canvas id="cTLConv" height="320"></canvas>
+      <canvas id="cTLConv" height="300"></canvas>
     </div>
   </div>
-
-  <!-- §05 SNAPSHOTS -->
-  <div class="sec-hdr" style="margin-top:20px">
-    <div class="sec-icon" style="background:#F0FDFA">📊</div>
-    <div class="sec-title">Graphical Snapshots</div>
-    <div class="sec-sub" id="snapPeriodLabel">— May-26</div>
-    <div class="sec-line"></div>
-  </div>
-  <div class="grid3" style="margin-bottom:14px">
+ 
+  <!-- §05 Snapshots -->
+  <div class="sec"><div class="sec-icon" style="background:#F0FDFA">📊</div><div class="sec-title">Graphical Snapshots</div><div class="sec-sub" id="snapLbl">— May-26</div><div class="sec-line"></div></div>
+  <div class="grid3" style="margin-bottom:13px">
     <div class="card">
-      <div class="card-hdr"><div><div class="card-title">Branch Performance Heatmap</div><div class="card-sub">Color = prospect volume · Shows conv. rate</div></div><div class="card-tag" id="tagHmap">May-26</div></div>
+      <div class="card-hdr"><div><div class="card-title">Branch Heatmap</div><div class="card-sub">Click a cell to drill into TL view</div></div><div class="card-tag" id="tagHmap">May-26</div></div>
       <div class="hmap" id="hmap"></div>
     </div>
     <div class="card">
       <div class="card-hdr"><div><div class="card-title">TL Leaderboard</div><div class="card-sub">Rank · Prospects · Conv %</div></div><div class="card-tag" id="tagLB">May-26</div></div>
+      <!-- Local branch filter for leaderboard -->
+      <div class="card-filter">
+        <label>Filter by Branch:</label>
+        <select id="lbBranchSel" onchange="renderLeaderboard(currentStats)">
+          <option value="">All Branches</option>
+        </select>
+      </div>
       <div class="lb-wrap" id="lboard"></div>
     </div>
     <div class="card">
       <div class="card-hdr"><div><div class="card-title">Conversion Funnel</div><div class="card-sub">Prospect → Assigned → Converted</div></div><div class="card-tag" id="tagFunnel">May-26</div></div>
-      <div class="funnel-body" id="funnel"></div>
+      <div class="funnel-wrap" id="funnel"></div>
     </div>
   </div>
-
-  <!-- §06 DAILY TREND -->
-  <div class="card" style="margin-bottom:14px">
+ 
+  <!-- §06 Daily Trend -->
+  <div class="card" style="margin-bottom:13px">
     <div class="card-hdr">
-      <div><div class="card-title">Daily Prospect Volume — May 2026</div><div class="card-sub">Bar = daily count · Line = 5-day moving average</div></div>
+      <div><div class="card-title">Chart 5 — Daily Prospect Volume</div><div class="card-sub">Bar = daily count · Line = 5-day moving average · Full month view</div></div>
       <div class="card-tag">May-26 Full Month</div>
     </div>
-    <canvas id="cDaily" height="180"></canvas>
+    <canvas id="cDaily" height="160"></canvas>
   </div>
-
-  <!-- §07 TODAY SNAPSHOT (always visible, always today) -->
-  <div class="sec-hdr" style="margin-top:20px">
-    <div class="sec-icon" style="background:#ECFDF5">🔴</div>
-    <div class="sec-title">Today's Live Snapshot — Branch-wise Prospects</div>
-    <div class="sec-sub" id="todaySnapDate"></div>
-    <div class="sec-line"></div>
+ 
+  <!-- §07 NEW: Projection per TL by Branch -->
+  <div class="sec"><div class="sec-icon" style="background:#FFFBEB">🔮</div><div class="sec-title">Chart 6 — Avg Forward Projection Volume per TL by Branch</div><div class="sec-sub" id="projLbl">— May-26</div><div class="sec-line"></div></div>
+  <div class="card" style="margin-bottom:13px">
+    <div class="card-hdr">
+      <div><div class="card-title">TL Workforce Projection Density by Branch</div><div class="card-sub">Grouped bars: Total Prospects vs Converted · Avg per TL shown · Labels on all bars</div></div>
+      <div class="card-tag" id="tag6">May-26</div>
+    </div>
+    <canvas id="cProjection" height="200"></canvas>
   </div>
-  <div class="today-grid" id="todayGrid"></div>
-
-  <!-- §08 KEY INSIGHTS -->
-  <div class="sec-hdr" style="margin-top:24px">
-    <div class="sec-icon" style="background:#FFFBEB">💡</div>
-    <div class="sec-title">Key Takeaways &amp; Action Signals</div>
-    <div class="sec-sub" id="insPeriodLabel">— May-26</div>
-    <div class="sec-line"></div>
-  </div>
+ 
+  <!-- §08 Today Snapshot — always live -->
+  <div class="sec"><div class="sec-icon" style="background:#ECFDF5">🔴</div><div class="sec-title">Today's Live Snapshot — Branch-wise</div><div class="sec-sub" id="todaySnapDate"></div><div class="sec-line"></div></div>
+  <div id="todayGridWrap"></div>
+ 
+  <!-- §09 Insights -->
+  <div class="sec" style="margin-top:20px"><div class="sec-icon" style="background:#FFFBEB">💡</div><div class="sec-title">Key Takeaways &amp; Action Signals</div><div class="sec-sub" id="insLbl">— May-26</div><div class="sec-line"></div></div>
   <div class="ins-grid" id="insights"></div>
-
-  <div class="footer">
-    Sales Intelligence Dashboard &nbsp;·&nbsp; Source: L2 Master Projection Sheet — Import File tab &nbsp;·&nbsp; Auto-refreshes every 5 minutes
-  </div>
-</div>
-
+ 
+  <div class="footer">Sales Projection &amp; Conversion Intelligence · Source: L2 Master Projection Sheet · Auto-refreshes every 5 min</div>
+</main>
+ 
 <script>
 // ═══════════════════════════════════════════════════════════
 //  CONFIG
 // ═══════════════════════════════════════════════════════════
 const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSg9GKvS6mn8tS8ieysQ1nv0UwWlULNwh4-bi1D4NXbdgw-WO-Tlj0Z2gg7JK4N_2LEdZ08Ffs7VsHi/pub?gid=1119571672&single=true&output=csv';
 const REFRESH_MINS = 5;
-
+ 
 // ═══════════════════════════════════════════════════════════
-//  STATE
+//  SESSION STATE (replaces Streamlit st.session_state)
 // ═══════════════════════════════════════════════════════════
-let allRows   = [];
-let activeFilter = 'may';  // 'may' | 'today'
-let charts   = {};
-let cdSecs   = REFRESH_MINS * 60;
-let cdTimer;
-
+const STATE = {
+  allRows:       [],
+  availMonths:   [],
+  activeMonth:   'May-26',
+  todayOnly:     false,
+  activeBranch:  null,    // drill-down branch
+  charts:        {},
+};
+ 
+let currentStats = null;
+let cdSecs = REFRESH_MINS * 60;
+let cdTimer = null;
+ 
+// ═══════════════════════════════════════════════════════════
+//  PALETTE
+// ═══════════════════════════════════════════════════════════
+const PAL = ['#3B82F6','#6366F1','#8B5CF6','#14B8A6','#22C55E',
+             '#F59E0B','#F43F5E','#0EA5E9','#EC4899','#10B981',
+             '#EF4444','#F97316','#84CC16','#06B6D4','#A855F7'];
+const pc = i => PAL[i % PAL.length];
+ 
+Chart.register(ChartDataLabels);
+Chart.defaults.font.family = "'DM Mono', monospace";
+Chart.defaults.font.size   = 11;
+Chart.defaults.color       = '#94A3C8';
+ 
 // ═══════════════════════════════════════════════════════════
 //  CSV PARSER
 // ═══════════════════════════════════════════════════════════
 function parseCSV(text) {
   const lines = text.trim().split('\n');
-  const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g,''));
+  const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
   return lines.slice(1).map(line => {
-    const cols = line.match(/(".*?"|[^,]+|(?<=,)(?=,)|^(?=,)|(?<=,)$)/g) || [];
+    // Handle quoted commas
+    const cols = [];
+    let cur = '', inQ = false;
+    for (let ch of line) {
+      if (ch === '"') { inQ = !inQ; continue; }
+      if (ch === ',' && !inQ) { cols.push(cur.trim()); cur = ''; continue; }
+      cur += ch;
+    }
+    cols.push(cur.trim());
     const obj = {};
-    headers.forEach((h, i) => {
-      obj[h] = (cols[i] || '').trim().replace(/^"|"$/g, '');
-    });
+    headers.forEach((h, i) => obj[h] = (cols[i] || '').trim());
     return obj;
-  });
+  }).filter(r => r['Location'] && r['Location'].length > 0);
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
-//  FETCH DATA
+//  FETCH
 // ═══════════════════════════════════════════════════════════
 async function fetchData() {
-  const res  = await fetch(CSV_URL + '&cachebust=' + Date.now());
+  const res  = await fetch(CSV_URL + '&cb=' + Date.now());
   const text = await res.text();
-  allRows    = parseCSV(text).filter(r => r['Location'] && r['Location'].length > 0);
-  document.getElementById('fetchTs').textContent = new Date().toLocaleTimeString('en-IN',{hour12:true});
+  STATE.allRows = parseCSV(text);
+ 
+  // Extract unique months from Col F
+  const months = [...new Set(STATE.allRows.map(r => r['Month']).filter(Boolean))].sort();
+  STATE.availMonths = months;
+ 
+  // Populate month dropdown
+  const mSel = document.getElementById('monthSel');
+  mSel.innerHTML = months.map(m =>
+    `<option value="${m}" ${m === STATE.activeMonth ? 'selected' : ''}>${m}</option>`
+  ).join('');
+ 
+  // Populate branch dropdown & leaderboard branch filter
+  const branches = [...new Set(STATE.allRows.map(r => r['Location']).filter(Boolean))].sort();
+  const bSel = document.getElementById('branchSel');
+  bSel.innerHTML = `<option value="">All Branches</option>` +
+    branches.map(b => `<option value="${b}">${b}</option>`).join('');
+ 
+  const lbSel = document.getElementById('lbBranchSel');
+  lbSel.innerHTML = `<option value="">All Branches</option>` +
+    branches.map(b => `<option value="${b}">${b}</option>`).join('');
+ 
+  document.getElementById('lastTs').textContent =
+    new Date().toLocaleTimeString('en-IN', { hour12:true });
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
-//  DATA HELPERS
+//  FILTERING
 // ═══════════════════════════════════════════════════════════
 function todayStr() {
-  // Returns today in d/m/yyyy format matching CSV Date column
   const d = new Date();
-  return `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`;
+  return `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()}`;
 }
-function todayDisplayStr() {
+function todayDisplay() {
   return new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
 }
-
-function normalizeDate(raw) {
-  if (!raw) return '';
-  // Handle M/D/YYYY from CSV (e.g. 5/1/2026 = May 1)
-  const p = raw.trim().split('/');
-  if (p.length === 3) return `${parseInt(p[1])}/${parseInt(p[0])}/${p[2]}`;
-  return raw.trim();
-}
-
-function filterRows(filter) {
-  if (filter === 'may')   return allRows.filter(r => r['Month'] && r['Month'].trim() === 'May-26');
-  if (filter === 'today') {
+ 
+function getFilteredRows() {
+  let rows = STATE.allRows.filter(r => r['Month'] === STATE.activeMonth);
+  if (STATE.todayOnly) {
     const td = new Date();
-    return allRows.filter(r => {
-      const raw = r['Date'] ? r['Date'].trim() : '';
-      // CSV date: M/D/YYYY (e.g. 5/18/2026)
-      const p = raw.split('/');
+    rows = rows.filter(r => {
+      const p = (r['Date'] || '').split('/');
       if (p.length !== 3) return false;
-      const m = parseInt(p[0]), d = parseInt(p[1]), y = parseInt(p[2]);
-      return m === td.getMonth()+1 && d === td.getDate() && y === td.getFullYear();
+      return +p[0] === td.getMonth()+1 && +p[1] === td.getDate() && +p[2] === td.getFullYear();
     });
   }
-  return [];
+  if (STATE.activeBranch) {
+    rows = rows.filter(r => r['Location'] === STATE.activeBranch);
+  }
+  return rows;
 }
-
+ 
+// ═══════════════════════════════════════════════════════════
+//  STATS COMPUTATION
+// ═══════════════════════════════════════════════════════════
+function cleanTL(n) {
+  if (!n || /^\d/.test(n) || n.includes('/')) return null;
+  return n.trim();
+}
+ 
 function computeStats(rows) {
-  const branchMap = {}, tlMap = {};
+  const bMap = {}, tMap = {};
   rows.forEach(r => {
-    const b = (r['Location'] || '').trim();
-    const t = cleanTL((r['TL Name'] || '').trim());
-    const yes = (r['Conversion'] || '').trim().toLowerCase() === 'yes';
+    const b   = (r['Location'] || '').trim();
+    const tl  = cleanTL(r['TL Name']);
+    const yes = (r['Conversion'] || '').toLowerCase() === 'yes';
     if (!b) return;
-    if (!branchMap[b]) branchMap[b] = { total:0, yes:0 };
-    branchMap[b].total++;
-    if (yes) branchMap[b].yes++;
-    if (t) {
-      if (!tlMap[t]) tlMap[t] = { total:0, yes:0, branch:b };
-      tlMap[t].total++;
-      if (yes) tlMap[t].yes++;
+    if (!bMap[b]) bMap[b] = { total:0, yes:0, tls:new Set() };
+    bMap[b].total++;
+    if (yes) bMap[b].yes++;
+    if (tl) {
+      bMap[b].tls.add(tl);
+      if (!tMap[tl]) tMap[tl] = { total:0, yes:0, branch:b };
+      tMap[tl].total++;
+      if (yes) tMap[tl].yes++;
     }
   });
-  const branches = Object.entries(branchMap)
-    .map(([n,v]) => ({ name:n, total:v.total, yes:v.yes, rate: v.total ? +((v.yes/v.total)*100).toFixed(1) : 0 }))
-    .sort((a,b) => b.total - a.total);
-  const tls = Object.entries(tlMap)
-    .map(([n,v]) => ({ name:n, branch:v.branch, total:v.total, yes:v.yes, rate: v.total ? +((v.yes/v.total)*100).toFixed(1) : 0 }))
-    .sort((a,b) => b.total - a.total);
-  const total = rows.length;
-  const totalYes = rows.filter(r => (r['Conversion']||'').trim().toLowerCase()==='yes').length;
+ 
+  const branches = Object.entries(bMap).map(([n, v]) => ({
+    name:n, total:v.total, yes:v.yes, tlCount:v.tls.size,
+    rate: v.total ? +((v.yes/v.total)*100).toFixed(1) : 0,
+    avgPerTL: v.tls.size ? +(v.total/v.tls.size).toFixed(1) : v.total,
+  })).sort((a,b) => b.total - a.total);
+ 
+  const tls = Object.entries(tMap).map(([n, v]) => ({
+    name:n, branch:v.branch, total:v.total, yes:v.yes,
+    rate: v.total ? +((v.yes/v.total)*100).toFixed(1) : 0,
+  })).sort((a,b) => b.total - a.total);
+ 
+  const total    = rows.length;
+  const totalYes = rows.filter(r => (r['Conversion']||'').toLowerCase()==='yes').length;
   return { branches, tls, total, totalYes, rate: total ? +((totalYes/total)*100).toFixed(1) : 0 };
 }
-
-function cleanTL(name) {
-  if (!name || /^\d/.test(name) || name.includes('/')) return null;
-  const norm = { 'abhishek kala':'Abhishek Kala','abhishek Kala':'Abhishek Kala','mohan':'Mohan','mahesh':'Mahesh','aryan':'ARYAN','sunnam rajkumar':'Sunnam Rajkumar','pawan':'PAWAN' };
-  return norm[name] || name;
+ 
+// ═══════════════════════════════════════════════════════════
+//  PERIOD LABEL
+// ═══════════════════════════════════════════════════════════
+function getPeriodLabel() {
+  let lbl = STATE.activeMonth;
+  if (STATE.todayOnly) lbl += ' · Today ' + todayDisplay();
+  if (STATE.activeBranch) lbl += ' · ' + STATE.activeBranch;
+  return lbl;
 }
-
-function computeDaily(rows) {
-  const map = {};
-  rows.forEach(r => {
-    const raw = (r['Date']||'').trim();
-    const p = raw.split('/');
-    if (p.length !== 3) return;
-    const key = `${p[1].padStart(2,'0')} May`;
-    map[key] = (map[key]||0) + 1;
+ 
+function updateLabels(lbl) {
+  ['kpiLbl','tbLbl','branchLbl','tlLbl','snapLbl','insLbl','projLbl'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = '— ' + lbl;
   });
-  return Object.entries(map).sort((a,b)=>a[0].localeCompare(b[0]));
+  ['tag1','tag2','tag3','tag4','tag6','tagHmap','tagLB','tagFunnel'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = lbl;
+  });
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
-//  DESTROY CHART HELPER
+//  DESTROY CHART
 // ═══════════════════════════════════════════════════════════
-function dc(id) { if (charts[id]) { charts[id].destroy(); delete charts[id]; } }
-
-// Colour palette for multi-colour bars
-const PALETTE = [
-  '#3B82F6','#6366F1','#8B5CF6','#14B8A6','#22C55E',
-  '#F59E0B','#F43F5E','#0EA5E9','#EC4899','#10B981',
-  '#EF4444','#F97316','#84CC16','#06B6D4','#A855F7'
-];
-function barColor(i) { return PALETTE[i % PALETTE.length]; }
-
-Chart.defaults.font.family = "'DM Mono', monospace";
-Chart.defaults.font.size   = 11;
-Chart.defaults.color       = '#94A3C8';
-
-function redGreenColor(rate) {
-  if (rate >= 20) return '#22C55E';
-  if (rate >= 10) return '#3B82F6';
-  if (rate >= 5)  return '#F59E0B';
-  return '#F43F5E';
+function dc(id) {
+  if (STATE.charts[id]) { STATE.charts[id].destroy(); delete STATE.charts[id]; }
 }
-
+ 
+// ═══════════════════════════════════════════════════════════
+//  CHART DEFAULTS — datalabels config
+// ═══════════════════════════════════════════════════════════
+function dlCfg(color='#1E2A45', anchor='end', align='end', offset=4) {
+  return {
+    display: true,
+    color,
+    font: { family:"'DM Mono',monospace", size:10, weight:'600' },
+    anchor, align, offset,
+    formatter: v => v === 0 ? '' : v,
+  };
+}
+ 
 // ═══════════════════════════════════════════════════════════
 //  RENDER ALL
 // ═══════════════════════════════════════════════════════════
-function renderAll(filter) {
-  const rows = filterRows(filter);
+function renderAll() {
+  const rows = getFilteredRows();
   const st   = computeStats(rows);
-  const label = filter === 'today' ? `Today (${todayDisplayStr()})` : 'May-26';
-
-  // Period labels
-  ['kpiPeriodLabel','tbPeriodLabel','branchPeriodLabel','tlPeriodLabel','snapPeriodLabel','insPeriodLabel'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.textContent = '— ' + label;
-  });
-  ['tagBranch1','tagBranch2','tagTL','tagTLConv','tagHmap','tagLB','tagFunnel'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.textContent = label;
-  });
-
-  // Header stats
+  currentStats = st;
+ 
+  const lbl = getPeriodLabel();
+  updateLabels(lbl);
+ 
+  // Header
   document.getElementById('hdrTotal').textContent = st.total.toLocaleString();
   document.getElementById('hdrConv').textContent  = st.totalYes;
   document.getElementById('hdrRate').textContent  = st.rate + '%';
-  document.getElementById('hdrSub').textContent   = `${label} · ${st.branches.length} Branches · ${st.tls.length} Team Leaders`;
-
+  document.getElementById('hdrSub').textContent   =
+    `${lbl} · ${st.branches.length} Branches · ${st.tls.length} TLs`;
+ 
   // Today banner
-  document.getElementById('todayBanner').classList.toggle('show', filter==='today');
-  document.getElementById('todayDateTxt').textContent = todayDisplayStr();
-
-  renderKPI(st, label);
+  const banner = document.getElementById('todayBanner');
+  banner.classList.toggle('show', STATE.todayOnly);
+  document.getElementById('todayDateTxt').textContent = todayDisplay();
+ 
+  // Drill panel
+  updateDrillPanel(st);
+ 
+  if (st.total === 0 && (STATE.todayOnly || STATE.activeBranch)) {
+    showEmptyState();
+    return;
+  }
+ 
+  renderKPI(st, lbl);
   renderTopBot(st);
-  renderChartBranch(st);
-  renderChartConv(st);
-  renderChartTL(st);
-  renderChartTLConv(st);
+  renderChart1(st);
+  renderChart2(st);
+  renderChart3(st);
+  renderChart4(st);
   renderHmap(st);
   renderLeaderboard(st);
   renderFunnel(st);
-  renderInsights(st, filter);
-
-  // Daily chart always full May data
-  const mayRows = filterRows('may');
-  renderDaily(mayRows);
-
-  // Today snapshot always today
+  renderChart6(st);
+  renderInsights(st, lbl);
+ 
+  // Always full month for daily trend
+  const mayRows = STATE.allRows.filter(r => r['Month'] === STATE.activeMonth);
+  renderChartDaily(mayRows);
+ 
+  // Always today for snapshot
   renderTodaySnap();
 }
-
+ 
+function showEmptyState() {
+  const sections = ['kpiGrid','tbGrid','hmap','lboard','funnel','insights'];
+  const msg = `<div class="empty-state">
+    <div class="empty-icon">📭</div>
+    <div class="empty-title">No Records Found</div>
+    No prospects logged for the selected filter combination.<br>
+    ${STATE.todayOnly ? `No data for today (${todayDisplay()}) yet.` : ''}
+    ${STATE.activeBranch ? `Branch: ${STATE.activeBranch} has no records.` : ''}
+  </div>`;
+  document.getElementById('kpiGrid').innerHTML = msg;
+  ['tbGrid','insights'].forEach(id => document.getElementById(id).innerHTML = msg);
+  document.getElementById('hmap').innerHTML = msg;
+  document.getElementById('lboard').innerHTML = msg;
+  document.getElementById('funnel').innerHTML = msg;
+  ['cBranch','cConv','cTL','cTLConv','cProjection'].forEach(id => dc(id));
+}
+ 
 // ═══════════════════════════════════════════════════════════
-//  KPI CARDS
+//  KPI
 // ═══════════════════════════════════════════════════════════
-function renderKPI(st, label) {
+function renderKPI(st, lbl) {
   const avg_b = st.branches.length ? (st.total/st.branches.length).toFixed(1) : '0';
-  const avg_t = st.tls.length ? (st.total/st.tls.length).toFixed(1) : '0';
-  const topB  = st.branches[0] || {name:'—',total:0,rate:0};
-  const botB  = [...st.branches].sort((a,b)=>a.total-b.total)[0] || {name:'—',total:0};
-  const topTL = st.tls[0] || {name:'—',total:0,rate:0};
-  const topConvTL = [...st.tls].sort((a,b)=>b.rate-a.rate)[0] || {name:'—',rate:0};
-
+  const topB  = st.branches[0] || { name:'—', total:0, rate:0 };
+  const botB  = [...st.branches].sort((a,b)=>a.total-b.total)[0] || { name:'—', total:0 };
+  const topTL = st.tls[0] || { name:'—', total:0, branch:'—' };
+  const topConvTL = [...st.tls].filter(t=>t.total>=2).sort((a,b)=>b.rate-a.rate)[0] || { name:'—', rate:0 };
+ 
   const cards = [
-    { icon:'🎯', lbl:'Total Prospects',   val:st.total.toLocaleString(), sub:label, stripe:'#3B82F6', ibg:'#EFF6FF' },
-    { icon:'✅', lbl:'Total Conversions', val:st.totalYes, sub:`Col G = Yes`, stripe:'#22C55E', ibg:'#F0FDF4' },
-    { icon:'📈', lbl:'Conversion Rate',   val:st.rate+'%', sub:'Overall %', stripe:'#8B5CF6', ibg:'#F5F3FF' },
-    { icon:'🏢', lbl:'Active Branches',   val:st.branches.length, sub:'With data in period', stripe:'#0EA5E9', ibg:'#F0F9FF' },
-    { icon:'👥', lbl:'Team Leaders',      val:st.tls.length, sub:'With activity', stripe:'#F59E0B', ibg:'#FFFBEB' },
-    { icon:'🏆', lbl:'Top Branch',        val:topB.name, sub:`${topB.total} prospects · ${topB.rate}% conv`, stripe:'#22C55E', ibg:'#F0FDF4', sm:true },
-    { icon:'⚠️', lbl:'Lowest Branch',     val:botB.name, sub:`${botB.total} prospects`, stripe:'#F43F5E', ibg:'#FFF1F2', sm:true },
-    { icon:'⭐', lbl:'Top TL (Volume)',    val:topTL.name, sub:`${topTL.total} prospects · ${topTL.branch}`, stripe:'#6366F1', ibg:'#EEF2FF', sm:true },
-    { icon:'🔥', lbl:'Best Conv. TL',     val:topConvTL.name, sub:`${topConvTL.rate}% rate`, stripe:'#F59E0B', ibg:'#FFFBEB', sm:true },
-    { icon:'📊', lbl:'Avg / Branch',      val:avg_b, sub:'Mean prospect count', stripe:'#14B8A6', ibg:'#F0FDFA' },
+    { icon:'🎯', lbl:'Total Prospects',   val:st.total,      sub:lbl,                           stripe:'#3B82F6', ibg:'#EFF6FF', vc:'var(--blue)' },
+    { icon:'✅', lbl:'Conversions',       val:st.totalYes,   sub:'Col G = Yes',                  stripe:'#22C55E', ibg:'#F0FDF4', vc:'var(--green)' },
+    { icon:'📈', lbl:'Conv. Rate',        val:st.rate+'%',   sub:'Overall %',                    stripe:'#8B5CF6', ibg:'#F5F3FF', vc:'var(--violet)' },
+    { icon:'🏢', lbl:'Active Branches',   val:st.branches.length, sub:'With data',              stripe:'#0EA5E9', ibg:'#F0F9FF', vc:'var(--sky)' },
+    { icon:'👥', lbl:'Team Leaders',      val:st.tls.length, sub:'With activity',                stripe:'#F59E0B', ibg:'#FFFBEB', vc:'var(--amber)' },
+    { icon:'🏆', lbl:'Top Branch',        val:topB.name,     sub:`${topB.total} prospects · ${topB.rate}%`, stripe:'#22C55E', ibg:'#F0FDF4', vc:'var(--green)', sm:true },
+    { icon:'⚠️', lbl:'Lowest Branch',     val:botB.name,     sub:`${botB.total} prospects`,      stripe:'#F43F5E', ibg:'#FFF1F2', vc:'var(--rose)', sm:true },
+    { icon:'⭐', lbl:'Top TL (Volume)',    val:topTL.name,    sub:`${topTL.total} · ${topTL.branch}`, stripe:'#6366F1', ibg:'#EEF2FF', vc:'var(--indigo)', sm:true },
+    { icon:'🔥', lbl:'Best Conv. TL',     val:topConvTL.name,sub:`${topConvTL.rate}% rate`,      stripe:'#F59E0B', ibg:'#FFFBEB', vc:'var(--amber)', sm:true },
+    { icon:'📊', lbl:'Avg / Branch',      val:avg_b,         sub:'Mean prospect count',          stripe:'#14B8A6', ibg:'#F0FDFA', vc:'var(--teal)' },
   ];
-
+ 
   document.getElementById('kpiGrid').innerHTML = cards.map((c,i) => `
     <div class="kpi" style="animation-delay:${i*.04}s">
       <div class="kpi-stripe" style="background:${c.stripe}"></div>
-      <div class="kpi-icon-wrap" style="background:${c.ibg}">${c.icon}</div>
+      <div class="kpi-icon" style="background:${c.ibg}">${c.icon}</div>
       <div class="kpi-lbl">${c.lbl}</div>
-      <div class="kpi-val ${c.sm?'sm':''}">${c.val}</div>
+      <div class="kpi-val ${c.sm?'sm':''}" style="color:${c.vc}">${c.val}</div>
       <div class="kpi-sub">${c.sub}</div>
     </div>`).join('');
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
-//  TOP / BOTTOM CARDS
+//  TOP / BOTTOM
 // ═══════════════════════════════════════════════════════════
 function renderTopBot(st) {
-  const sortedByTotal = [...st.branches];
-  const sortedByConv  = [...st.branches].sort((a,b)=>b.rate-a.rate);
-  const sortedTLConv  = [...st.tls].sort((a,b)=>b.rate-a.rate);
-  const botBranch     = [...st.branches].sort((a,b)=>a.total-b.total)[0]||{name:'—',total:0,yes:0,rate:0};
-  const topBranch     = sortedByTotal[0]||{name:'—',total:0,yes:0,rate:0};
-  const topTL         = st.tls[0]||{name:'—',total:0,yes:0,rate:0,branch:'—'};
-  const botTL         = [...st.tls].sort((a,b)=>a.total-b.total)[0]||{name:'—',total:0,yes:0,rate:0,branch:'—'};
-
-  const cards = [
-    { badge:'🏆 Top Branch',      badgeC:'#166534', badgeBg:'#DCFCE7', name:topBranch.name, branch:'Highest prospect volume', p:topBranch.total, c:topBranch.yes, r:topBranch.rate, acc:'#22C55E' },
-    { badge:'⚠️ Lowest Branch',   badgeC:'#9F1239', badgeBg:'#FFE4E6', name:botBranch.name, branch:'Lowest prospect volume',  p:botBranch.total, c:botBranch.yes, r:botBranch.rate, acc:'#F43F5E' },
-    { badge:'⭐ Top TL',          badgeC:'#1E40AF', badgeBg:'#DBEAFE', name:topTL.name, branch:topTL.branch, p:topTL.total, c:topTL.yes, r:topTL.rate, acc:'#3B82F6' },
-    { badge:'📉 Bottom TL',       badgeC:'#92400E', badgeBg:'#FEF3C7', name:botTL.name, branch:botTL.branch, p:botTL.total, c:botTL.yes, r:botTL.rate, acc:'#F59E0B' },
+  const topB    = st.branches[0] || { name:'—', total:0, yes:0, rate:0 };
+  const botB    = [...st.branches].sort((a,b)=>a.total-b.total)[0] || { name:'—', total:0, yes:0, rate:0 };
+  const topTL   = st.tls[0] || { name:'—', total:0, yes:0, rate:0, branch:'—' };
+  const botTL   = [...st.tls].sort((a,b)=>a.total-b.total)[0] || { name:'—', total:0, yes:0, rate:0, branch:'—' };
+ 
+  const defs = [
+    { badge:'🏆 Top Branch',    bc:'#166534', bb:'#DCFCE7', name:topB.name, br:'Highest prospect volume', p:topB.total, c:topB.yes, r:topB.rate, acc:'#22C55E' },
+    { badge:'⚠️ Lowest Branch', bc:'#9F1239', bb:'#FFE4E6', name:botB.name, br:'Lowest prospect volume',  p:botB.total, c:botB.yes, r:botB.rate, acc:'#F43F5E' },
+    { badge:'⭐ Top TL',        bc:'#1E40AF', bb:'#DBEAFE', name:topTL.name,br:topTL.branch,              p:topTL.total,c:topTL.yes,r:topTL.rate,acc:'#3B82F6' },
+    { badge:'📉 Bottom TL',     bc:'#92400E', bb:'#FEF3C7', name:botTL.name,br:botTL.branch,              p:botTL.total,c:botTL.yes,r:botTL.rate,acc:'#F59E0B' },
   ];
-
-  document.getElementById('topBotGrid').innerHTML = cards.map((c,i) => `
+ 
+  document.getElementById('tbGrid').innerHTML = defs.map((d,i) => `
     <div class="tb-card" style="animation-delay:${i*.06}s">
-      <div class="tb-accent" style="background:${c.acc}"></div>
-      <div class="tb-badge" style="background:${c.badgeBg};color:${c.badgeC}">${c.badge}</div>
-      <div class="tb-name">${c.name}</div>
-      <div class="tb-branch">${c.branch}</div>
+      <div class="tb-accent" style="background:${d.acc}"></div>
+      <div class="tb-badge" style="background:${d.bb};color:${d.bc}">${d.badge}</div>
+      <div class="tb-name">${d.name}</div>
+      <div class="tb-branch">${d.br}</div>
       <div class="tb-stats">
-        <div class="tb-stat"><div class="tb-stat-val" style="color:${c.acc}">${c.p}</div><div class="tb-stat-lbl">Prospects</div></div>
-        <div class="tb-stat"><div class="tb-stat-val" style="color:#22C55E">${c.c}</div><div class="tb-stat-lbl">Converted</div></div>
-        <div class="tb-stat"><div class="tb-stat-val" style="color:#6366F1">${c.r}%</div><div class="tb-stat-lbl">Conv Rate</div></div>
+        <div><div class="tb-sv" style="color:${d.acc}">${d.p}</div><div class="tb-sl">Prospects</div></div>
+        <div><div class="tb-sv" style="color:var(--green)">${d.c}</div><div class="tb-sl">Converted</div></div>
+        <div><div class="tb-sv" style="color:var(--violet)">${d.r}%</div><div class="tb-sl">Rate</div></div>
       </div>
     </div>`).join('');
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
-//  CHART: Branch Count (horizontal)
+//  CHART 1 — Branch Count (horizontal) with click drill-down
 // ═══════════════════════════════════════════════════════════
-function renderChartBranch(st) {
+function renderChart1(st) {
   dc('cBranch');
-  const sorted = [...st.branches].sort((a,b)=>a.total-b.total);
-  charts.cBranch = new Chart(document.getElementById('cBranch').getContext('2d'), {
+  const sorted = [...st.branches].sort((a,b) => a.total - b.total);
+  const ctx = document.getElementById('cBranch').getContext('2d');
+  STATE.charts.cBranch = new Chart(ctx, {
     type:'bar',
     data:{
-      labels: sorted.map(b=>b.name),
-      datasets:[{ data:sorted.map(b=>b.total), backgroundColor:sorted.map((_,i)=>barColor(i)), borderRadius:6, borderSkipped:false }]
+      labels: sorted.map(b => b.name),
+      datasets:[{
+        data: sorted.map(b => b.total),
+        backgroundColor: sorted.map((_,i) => pc(i)),
+        borderRadius:6, borderSkipped:false,
+      }]
     },
     options:{
-      indexAxis:'y', animation:{duration:800,easing:'easeOutQuart'},
-      plugins:{ legend:{display:false}, tooltip:{callbacks:{label:ctx=>` ${ctx.parsed.x} prospects`}} },
+      indexAxis:'y', animation:{duration:800},
+      onClick(e, els) {
+        if (!els.length) return;
+        const b = sorted[els[0].index].name;
+        setDrillBranch(b);
+      },
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:ctx=>` ${ctx.parsed.x} prospects`}},
+        datalabels: dlCfg('#1E2A45','end','end',6),
+      },
       scales:{
         x:{ grid:{color:'#F1F5F9'}, ticks:{color:'#94A3C8'} },
         y:{ grid:{display:false}, ticks:{color:'#1E2A45',font:{size:11}} }
@@ -757,51 +921,57 @@ function renderChartBranch(st) {
     }
   });
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
-//  CHART: Branch Conversion Rate (vertical)
+//  CHART 2 — Branch Conversion Rate
 // ═══════════════════════════════════════════════════════════
-function renderChartConv(st) {
+function renderChart2(st) {
   dc('cConv');
-  const sorted = [...st.branches].sort((a,b)=>b.rate-a.rate);
+  const sorted = [...st.branches].sort((a,b) => b.rate - a.rate);
   const n = sorted.length;
-  const colors = sorted.map((_,i)=>{
-    if(i<3) return '#22C55E';
-    if(i>=n-3) return '#F43F5E';
-    return '#3B82F6';
-  });
-  charts.cConv = new Chart(document.getElementById('cConv').getContext('2d'), {
+  const colors = sorted.map((_,i) =>
+    i<3 ? '#22C55E' : i>=n-3 ? '#F43F5E' : '#3B82F6'
+  );
+  STATE.charts.cConv = new Chart(document.getElementById('cConv').getContext('2d'), {
     type:'bar',
     data:{
-      labels: sorted.map(b=>b.name),
+      labels: sorted.map(b => b.name),
       datasets:[{ data:sorted.map(b=>b.rate), backgroundColor:colors, borderRadius:6, borderSkipped:false }]
     },
     options:{
-      animation:{duration:800,easing:'easeOutQuart'},
-      plugins:{ legend:{display:false}, tooltip:{callbacks:{label:ctx=>` ${ctx.parsed.y}%`}} },
+      animation:{duration:800},
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:ctx=>` ${ctx.parsed.y}%`}},
+        datalabels: { ...dlCfg('#1E2A45','end','end',4), formatter:v => v+'%' },
+      },
       scales:{
-        x:{ grid:{display:false}, ticks:{color:'#94A3C8',maxRotation:40,minRotation:30,font:{size:10}} },
-        y:{ grid:{color:'#F1F5F9'}, ticks:{color:'#94A3C8',callback:v=>v+'%'} }
+        x:{ grid:{display:false}, ticks:{color:'#94A3C8',maxRotation:38,font:{size:10}} },
+        y:{ grid:{color:'#F1F5F9'}, ticks:{color:'#94A3C8',callback:v=>v+'%'}, suggestedMax: Math.max(...sorted.map(b=>b.rate))*1.3 }
       }
     }
   });
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
-//  CHART: TL Count (horizontal)
+//  CHART 3 — TL Count
 // ═══════════════════════════════════════════════════════════
-function renderChartTL(st) {
+function renderChart3(st) {
   dc('cTL');
   const top = st.tls.slice(0,18);
-  charts.cTL = new Chart(document.getElementById('cTL').getContext('2d'), {
+  STATE.charts.cTL = new Chart(document.getElementById('cTL').getContext('2d'), {
     type:'bar',
     data:{
-      labels: top.map(t=>`${t.name} · ${t.branch}`),
-      datasets:[{ data:top.map(t=>t.total), backgroundColor:top.map((_,i)=>barColor(i)), borderRadius:5, borderSkipped:false }]
+      labels: top.map(t => `${t.name} · ${t.branch}`),
+      datasets:[{ data:top.map(t=>t.total), backgroundColor:top.map((_,i)=>pc(i)), borderRadius:5, borderSkipped:false }]
     },
     options:{
-      indexAxis:'y', animation:{duration:900,easing:'easeOutQuart'},
-      plugins:{ legend:{display:false}, tooltip:{callbacks:{label:ctx=>` ${ctx.parsed.x} prospects`}} },
+      indexAxis:'y', animation:{duration:900},
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:ctx=>` ${ctx.parsed.x} prospects`}},
+        datalabels: dlCfg('#1E2A45','end','end',5),
+      },
       scales:{
         x:{ grid:{color:'#F1F5F9'}, ticks:{color:'#94A3C8'} },
         y:{ grid:{display:false}, ticks:{color:'#1E2A45',font:{size:10}} }
@@ -809,22 +979,27 @@ function renderChartTL(st) {
     }
   });
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
-//  CHART: TL Conversion Rate (horizontal)
+//  CHART 4 — TL Conversion Rate
 // ═══════════════════════════════════════════════════════════
-function renderChartTLConv(st) {
+function renderChart4(st) {
   dc('cTLConv');
-  const top = [...st.tls].filter(t=>t.total>=2).sort((a,b)=>b.rate-a.rate).slice(0,15);
-  charts.cTLConv = new Chart(document.getElementById('cTLConv').getContext('2d'), {
+  const top = [...st.tls].filter(t=>t.total>=2).sort((a,b)=>b.rate-a.rate).slice(0,14);
+  const rateColor = r => r>=20?'#22C55E':r>=10?'#3B82F6':r>=5?'#F59E0B':'#F43F5E';
+  STATE.charts.cTLConv = new Chart(document.getElementById('cTLConv').getContext('2d'), {
     type:'bar',
     data:{
       labels: top.map(t=>t.name),
-      datasets:[{ data:top.map(t=>t.rate), backgroundColor:top.map(t=>redGreenColor(t.rate)), borderRadius:5, borderSkipped:false }]
+      datasets:[{ data:top.map(t=>t.rate), backgroundColor:top.map(t=>rateColor(t.rate)), borderRadius:5, borderSkipped:false }]
     },
     options:{
-      indexAxis:'y', animation:{duration:900,easing:'easeOutQuart'},
-      plugins:{ legend:{display:false}, tooltip:{callbacks:{label:ctx=>` ${ctx.parsed.x}%`}} },
+      indexAxis:'y', animation:{duration:900},
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:ctx=>` ${ctx.parsed.x}%`}},
+        datalabels: { ...dlCfg('#1E2A45','end','end',5), formatter:v=>v+'%' },
+      },
       scales:{
         x:{ grid:{color:'#F1F5F9'}, ticks:{color:'#94A3C8',callback:v=>v+'%'} },
         y:{ grid:{display:false}, ticks:{color:'#1E2A45',font:{size:10}} }
@@ -832,78 +1007,187 @@ function renderChartTLConv(st) {
     }
   });
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
-//  HEATMAP
+//  CHART 5 — Daily Trend
 // ═══════════════════════════════════════════════════════════
+function renderChartDaily(rows) {
+  dc('cDaily');
+  const map = {};
+  rows.forEach(r => {
+    const p = (r['Date']||'').split('/');
+    if (p.length!==3) return;
+    const key = `${p[1].padStart(2,'0')} May`;
+    map[key] = (map[key]||0)+1;
+  });
+  const pairs  = Object.entries(map).sort((a,b)=>a[0].localeCompare(b[0]));
+  const labels = pairs.map(p=>p[0]);
+  const vals   = pairs.map(p=>p[1]);
+  const ma     = vals.map((_,i)=>{
+    const sl = vals.slice(Math.max(0,i-4),i+1);
+    return +(sl.reduce((s,v)=>s+v,0)/sl.length).toFixed(1);
+  });
+ 
+  STATE.charts.cDaily = new Chart(document.getElementById('cDaily').getContext('2d'), {
+    type:'bar',
+    data:{
+      labels,
+      datasets:[
+        { type:'bar',  label:'Daily',   data:vals, backgroundColor:'rgba(99,102,241,.45)', borderRadius:4, order:2 },
+        { type:'line', label:'5D Avg',  data:ma,   borderColor:'#F59E0B', backgroundColor:'transparent',
+          borderWidth:2.5, pointRadius:4, pointBackgroundColor:'#F59E0B', tension:.45, order:1 },
+      ]
+    },
+    options:{
+      animation:{duration:900},
+      plugins:{
+        legend:{display:true,labels:{color:'#94A3C8',boxWidth:10,padding:14}},
+        tooltip:{mode:'index',intersect:false},
+        datalabels:{
+          display: ctx => ctx.datasetIndex===0,
+          ...dlCfg('#1E2A45','end','end',4),
+        },
+      },
+      scales:{
+        x:{ grid:{display:false}, ticks:{color:'#94A3C8',maxRotation:35,font:{size:10}} },
+        y:{ grid:{color:'#F1F5F9'}, ticks:{color:'#94A3C8'} }
+      }
+    }
+  });
+}
+ 
+// ═══════════════════════════════════════════════════════════
+//  CHART 6 — Avg Forward Projection per TL by Branch
+// ═══════════════════════════════════════════════════════════
+function renderChart6(st) {
+  dc('cProjection');
+  const branches = st.branches.slice(0,12); // top 12 by volume
+  STATE.charts.cProjection = new Chart(document.getElementById('cProjection').getContext('2d'), {
+    type:'bar',
+    data:{
+      labels: branches.map(b => b.name),
+      datasets:[
+        {
+          label:'Total Prospects',
+          data: branches.map(b => b.total),
+          backgroundColor:'rgba(99,102,241,.75)',
+          borderRadius:5, borderSkipped:false,
+        },
+        {
+          label:'Converted',
+          data: branches.map(b => b.yes),
+          backgroundColor:'rgba(34,197,94,.75)',
+          borderRadius:5, borderSkipped:false,
+        },
+        {
+          label:'Avg Prospects / TL',
+          data: branches.map(b => b.avgPerTL),
+          backgroundColor:'rgba(245,158,11,.75)',
+          borderRadius:5, borderSkipped:false,
+        },
+      ]
+    },
+    options:{
+      animation:{duration:1000},
+      plugins:{
+        legend:{display:true, labels:{color:'#4A5578',boxWidth:12,padding:16,font:{size:11}}},
+        tooltip:{mode:'index',intersect:false},
+        datalabels:{
+          display: true,
+          anchor:'end', align:'end', offset:3,
+          font:{ family:"'DM Mono',monospace", size:9, weight:'600' },
+          color:'#4A5578',
+          formatter: v => v===0?'':v,
+        },
+      },
+      scales:{
+        x:{ grid:{display:false}, ticks:{color:'#94A3C8',maxRotation:35,font:{size:10}} },
+        y:{ grid:{color:'#F1F5F9'}, ticks:{color:'#94A3C8'}, suggestedMax: Math.max(...branches.map(b=>b.total))*1.25 }
+      }
+    }
+  });
+}
+ 
+// ═══════════════════════════════════════════════════════════
+//  HEATMAP — clickable for drill-down
+// ═══════════════════════════════════════════════════════════
+function lerpColor(a,b,t){
+  const ah=parseInt(a.replace('#',''),16),bh=parseInt(b.replace('#',''),16);
+  const [ar,ag,ab_]=[ah>>16&0xff,ah>>8&0xff,ah&0xff];
+  const [br,bg,bb_]=[bh>>16&0xff,bh>>8&0xff,bh&0xff];
+  return `rgb(${Math.round(ar+(br-ar)*t)},${Math.round(ag+(bg-ag)*t)},${Math.round(ab_+(bb_-ab_)*t)})`;
+}
+const HCOLS=[['#DBEAFE','#1E40AF'],['#D1FAE5','#166534'],['#FEF3C7','#92400E'],['#FCE7F3','#9D174D'],
+             ['#E0E7FF','#3730A3'],['#CCFBF1','#134E4A'],['#FEE2E2','#991B1B'],['#F3E8FF','#6B21A8'],
+             ['#ECFDF5','#065F46'],['#FFF7ED','#7C2D12'],['#EFF6FF','#1E3A8A'],['#F0FDFA','#134E4A'],['#FDF4FF','#701A75']];
+ 
 function renderHmap(st) {
-  const max = st.branches[0]?.total||1;
-  const HMAP_COLORS = [
-    ['#DBEAFE','#1E40AF'],['#D1FAE5','#166534'],['#FEF3C7','#92400E'],
-    ['#FCE7F3','#9D174D'],['#E0E7FF','#3730A3'],['#CCFBF1','#134E4A'],
-    ['#FEE2E2','#991B1B'],['#F3E8FF','#6B21A8'],['#ECFDF5','#065F46'],
-    ['#FFF7ED','#7C2D12'],['#EFF6FF','#1E3A8A'],['#F0FDFA','#134E4A'],
-    ['#FDF4FF','#701A75'],
-  ];
-  document.getElementById('hmap').innerHTML = st.branches.map((b,i)=>{
+  const max = st.branches[0]?.total || 1;
+  document.getElementById('hmap').innerHTML = st.branches.map((b,i) => {
     const t = b.total/max;
-    const [ltC, dkC] = HMAP_COLORS[i % HMAP_COLORS.length];
-    const bg = lerpColor(ltC, dkC, t*0.6+0.1);
-    const txtC = t>0.55?'#fff':dkC;
-    return `<div class="hmap-cell" style="background:${bg};border-color:${dkC}22;color:${txtC}" title="${b.name}: ${b.total} prospects · ${b.rate}% conv">
+    const [lt,dk] = HCOLS[i%HCOLS.length];
+    const bg  = lerpColor(lt,dk,t*.6+.1);
+    const txtC= t>.55?'#fff':dk;
+    const sel = STATE.activeBranch===b.name?' selected':'';
+    return `<div class="hmap-cell${sel}" style="background:${bg};border-color:${dk}33;color:${txtC}"
+       onclick="setDrillBranch('${b.name.replace(/'/g,"\\'")}')">
       <div class="hmap-name">${b.name}</div>
       <div class="hmap-count">${b.total}</div>
       <div class="hmap-rate">${b.rate}% conv</div>
     </div>`;
   }).join('');
 }
-
-function lerpColor(a, b, t) {
-  const ah = parseInt(a.replace('#',''),16), bh = parseInt(b.replace('#',''),16);
-  const ar=(ah>>16)&0xff, ag=(ah>>8)&0xff, ab=ah&0xff;
-  const br=(bh>>16)&0xff, bg=(bh>>8)&0xff, bb=bh&0xff;
-  const r=Math.round(ar+(br-ar)*t), g=Math.round(ag+(bg-ag)*t), bl=Math.round(ab+(bb-ab)*t);
-  return `rgb(${r},${g},${bl})`;
-}
-
+ 
 // ═══════════════════════════════════════════════════════════
-//  LEADERBOARD
+//  LEADERBOARD with branch filter
 // ═══════════════════════════════════════════════════════════
 function renderLeaderboard(st) {
+  const filterBranch = document.getElementById('lbBranchSel')?.value || '';
+  const tls = filterBranch
+    ? st.tls.filter(t => t.branch === filterBranch)
+    : st.tls;
+ 
   const medals = ['🥇','🥈','🥉'];
-  const maxT = st.tls[0]?.total||1;
-  document.getElementById('lboard').innerHTML = st.tls.slice(0,20).map((t,i)=>{
-    const medal = medals[i] || `<span style="font-size:11px;color:var(--muted)">${i+1}</span>`;
-    const bw = ((t.total/maxT)*100).toFixed(0);
-    const pc = t.rate>=20?'var(--green)':t.rate>=10?'var(--blue)':'var(--amber)';
+  const maxT   = tls[0]?.total || 1;
+ 
+  if (!tls.length) {
+    document.getElementById('lboard').innerHTML =
+      `<div class="empty-state" style="padding:20px"><div class="empty-icon">👥</div><div>No TLs for this branch</div></div>`;
+    return;
+  }
+ 
+  document.getElementById('lboard').innerHTML = tls.slice(0,20).map((t,i) => {
+    const medal = medals[i] || `<span style="font-size:10px;color:var(--muted)">${i+1}</span>`;
+    const bw    = ((t.total/maxT)*100).toFixed(0);
+    const pc2   = t.rate>=20?'var(--green)':t.rate>=10?'var(--blue)':'var(--amber)';
     return `<div class="lb-row">
       <div class="lb-rank">${medal}</div>
       <div class="lb-info">
         <div class="lb-name">${t.name}</div>
         <div class="lb-branch">${t.branch}</div>
       </div>
-      <div class="lb-bar-bg"><div class="lb-bar" style="width:${bw}%;background:${barColor(i)}"></div></div>
+      <div class="lb-bar-bg"><div class="lb-bar" style="width:${bw}%;background:${pc(i)}"></div></div>
       <div class="lb-num">${t.total}</div>
-      <div class="lb-pct" style="color:${pc}">${t.rate}%</div>
+      <div class="lb-pct" style="color:${pc2}">${t.rate}%</div>
     </div>`;
   }).join('');
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
 //  FUNNEL
 // ═══════════════════════════════════════════════════════════
 function renderFunnel(st) {
-  const assigned = Math.round(st.total * 0.945);
-  const stages = [
-    { lbl:'Total Prospects', sub:'All records in period', n:st.total, pct:100, c:'#3B82F6', bc:'#EFF6FF', bc2:'#BFDBFE', w:100 },
-    { lbl:'TL Assigned',     sub:'With TL mapped (est.)', n:assigned, pct:+((assigned/st.total)*100).toFixed(1), c:'#8B5CF6', bc:'#F5F3FF', bc2:'#DDD6FE', w:80 },
-    { lbl:'Converted',       sub:'Col G = Yes',           n:st.totalYes, pct:+((st.totalYes/st.total)*100).toFixed(1), c:'#22C55E', bc:'#F0FDF4', bc2:'#BBF7D0', w:60 },
+  const assigned = Math.round(st.total * .945);
+  const stages   = [
+    { lbl:'Total Prospects', sub:'All records in period',  n:st.total,   pct:100,                                              c:'#3B82F6',bc:'#EFF6FF',bc2:'#BFDBFE',w:100 },
+    { lbl:'TL Assigned',     sub:'With TL mapped (est.)', n:assigned,   pct:+((assigned/Math.max(st.total,1))*100).toFixed(1),c:'#8B5CF6',bc:'#F5F3FF',bc2:'#DDD6FE',w:80  },
+    { lbl:'Converted',       sub:'Col G = Yes',            n:st.totalYes,pct:+((st.totalYes/Math.max(st.total,1))*100).toFixed(1),c:'#22C55E',bc:'#F0FDF4',bc2:'#BBF7D0',w:60 },
   ];
   let html = '';
-  stages.forEach((s,i)=>{
-    if(i>0){
+  stages.forEach((s,i) => {
+    if (i>0) {
       const drop = (100-s.pct).toFixed(1);
-      html += `<div class="f-drop" style="align-self:flex-start;margin-left:10px">▼ ${drop}% drop-off</div>`;
+      html += `<div class="f-drop">▼ ${drop}% drop-off</div>`;
     }
     html += `<div class="f-stage" style="width:${s.w}%;background:${s.bc};border-color:${s.bc2}">
       <div><div class="f-lbl" style="color:${s.c}">${s.lbl}</div><div class="f-sub" style="color:${s.c}">${s.sub} · ${s.pct}%</div></div>
@@ -912,174 +1196,235 @@ function renderFunnel(st) {
   });
   document.getElementById('funnel').innerHTML = html;
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
-//  DAILY CHART
+//  DRILL-DOWN: Branch → TL chart
 // ═══════════════════════════════════════════════════════════
-function renderDaily(mayRows) {
-  dc('cDaily');
-  const dailyMap = {};
-  mayRows.forEach(r => {
-    const raw = (r['Date']||'').trim();
-    const p = raw.split('/');
-    if(p.length!==3) return;
-    const key = `${p[1].padStart(2,'0')} May`;
-    dailyMap[key] = (dailyMap[key]||0)+1;
+function setDrillBranch(branch) {
+  STATE.activeBranch = branch;
+  document.getElementById('branchSel').value = branch;
+  renderAll();
+  renderDrillChart(branch);
+  document.getElementById('drillView').classList.add('show');
+  document.getElementById('drillView').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+ 
+function clearDrill() {
+  STATE.activeBranch = null;
+  document.getElementById('branchSel').value = '';
+  document.getElementById('drillView').classList.remove('show');
+  document.getElementById('drillPanel').classList.remove('show');
+  renderAll();
+}
+ 
+function renderDrillChart(branch) {
+  dc('cDrill');
+  // Get TLs for this branch from ALL month data (no today filter for drill)
+  const rows = STATE.allRows.filter(r =>
+    r['Month'] === STATE.activeMonth && r['Location'] === branch
+  );
+  const tlMap = {};
+  rows.forEach(r => {
+    const tl  = cleanTL(r['TL Name']);
+    if (!tl) return;
+    if (!tlMap[tl]) tlMap[tl] = { total:0, yes:0 };
+    tlMap[tl].total++;
+    if ((r['Conversion']||'').toLowerCase()==='yes') tlMap[tl].yes++;
   });
-  const pairs = Object.entries(dailyMap).sort((a,b)=>a[0].localeCompare(b[0]));
-  const labels = pairs.map(p=>p[0]);
-  const vals   = pairs.map(p=>p[1]);
-  const ma = vals.map((_,i)=>{ const sl=vals.slice(Math.max(0,i-4),i+1); return +(sl.reduce((s,v)=>s+v,0)/sl.length).toFixed(1); });
-
-  charts.cDaily = new Chart(document.getElementById('cDaily').getContext('2d'), {
+  const tls = Object.entries(tlMap).sort((a,b)=>b[1].total-a[1].total);
+ 
+  document.getElementById('drillViewTitle').textContent = `TL Breakdown — ${branch}`;
+ 
+  if (!tls.length) {
+    document.getElementById('cDrill').style.display='none';
+    return;
+  }
+  document.getElementById('cDrill').style.display='';
+ 
+  STATE.charts.cDrill = new Chart(document.getElementById('cDrill').getContext('2d'), {
     type:'bar',
     data:{
-      labels,
+      labels: tls.map(([n])=>n),
       datasets:[
-        { type:'bar',  label:'Daily Count', data:vals, backgroundColor:'rgba(99,102,241,.45)', borderRadius:5, order:2 },
-        { type:'line', label:'5-Day Avg',   data:ma,   borderColor:'#F59E0B', backgroundColor:'transparent', borderWidth:2.5, pointRadius:4, pointBackgroundColor:'#F59E0B', tension:.45, order:1 },
+        { label:'Prospects', data:tls.map(([,v])=>v.total), backgroundColor:'rgba(99,102,241,.7)', borderRadius:5, borderSkipped:false },
+        { label:'Converted', data:tls.map(([,v])=>v.yes),   backgroundColor:'rgba(34,197,94,.7)',  borderRadius:5, borderSkipped:false },
       ]
     },
     options:{
-      animation:{duration:900},
-      plugins:{ legend:{display:true,labels:{color:'#94A3C8',boxWidth:10,padding:16}}, tooltip:{mode:'index',intersect:false} },
+      animation:{duration:700},
+      plugins:{
+        legend:{display:true,labels:{color:'#4A5578',boxWidth:10,padding:12,font:{size:10}}},
+        datalabels:{
+          display:true, anchor:'end', align:'end', offset:3,
+          font:{family:"'DM Mono',monospace",size:10,weight:'600'},
+          color:'#4A5578', formatter:v=>v===0?'':v,
+        },
+      },
       scales:{
-        x:{ grid:{display:false}, ticks:{color:'#94A3C8',maxRotation:35,font:{size:10}} },
-        y:{ grid:{color:'#F1F5F9'}, ticks:{color:'#94A3C8'} }
+        x:{grid:{display:false},ticks:{color:'#94A3C8',font:{size:11}}},
+        y:{grid:{color:'#F1F5F9'},ticks:{color:'#94A3C8'}}
       }
     }
   });
 }
-
+ 
+function updateDrillPanel(st) {
+  const panel = document.getElementById('drillPanel');
+  if (!STATE.activeBranch) { panel.classList.remove('show'); return; }
+  panel.classList.add('show');
+  const b = st.branches.find(x=>x.name===STATE.activeBranch) || { total:0, yes:0, rate:0 };
+  document.getElementById('drillBranchName').textContent = STATE.activeBranch;
+  document.getElementById('drillTotal').textContent = b.total;
+  document.getElementById('drillConv').textContent  = b.yes;
+  document.getElementById('drillRate').textContent  = b.rate + '%';
+}
+ 
 // ═══════════════════════════════════════════════════════════
-//  TODAY SNAPSHOT — always today, always branch-wise
+//  TODAY SNAPSHOT — always today, always all months
 // ═══════════════════════════════════════════════════════════
 function renderTodaySnap() {
-  const todayRows = filterRows('today');
+  const td  = new Date();
   const snap = {};
-  todayRows.forEach(r=>{
+  STATE.allRows.forEach(r => {
+    const p = (r['Date']||'').split('/');
+    if (p.length!==3) return;
+    if (+p[0]!==td.getMonth()+1||+p[1]!==td.getDate()||+p[2]!==td.getFullYear()) return;
     const b = (r['Location']||'').trim();
-    if(!b) return;
-    if(!snap[b]) snap[b]={total:0,yes:0};
+    if (!b) return;
+    if (!snap[b]) snap[b]={total:0,yes:0};
     snap[b].total++;
-    if((r['Conversion']||'').trim().toLowerCase()==='yes') snap[b].yes++;
+    if ((r['Conversion']||'').toLowerCase()==='yes') snap[b].yes++;
   });
-
-  document.getElementById('todaySnapDate').textContent = `— ${todayDisplayStr()}`;
-
+ 
+  document.getElementById('todaySnapDate').textContent = `— ${todayDisplay()}`;
   const entries = Object.entries(snap).sort((a,b)=>b[1].total-a[1].total);
-  const SNAP_COLORS = ['#3B82F6','#6366F1','#8B5CF6','#14B8A6','#22C55E','#F59E0B','#F43F5E','#0EA5E9','#EC4899','#10B981','#EF4444','#F97316','#A855F7'];
-
-  if(entries.length === 0){
-    document.getElementById('todayGrid').innerHTML = `
-      <div style="grid-column:1/-1;text-align:center;padding:24px;color:var(--muted);font-family:var(--mono);font-size:13px">
-        📭 No prospects logged today yet (${todayDisplayStr()})
-      </div>`;
+ 
+  const wrap = document.getElementById('todayGridWrap');
+  if (!entries.length) {
+    wrap.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">📭</div>
+      <div class="empty-title">No Prospects Logged Today</div>
+      No records found for ${todayDisplay()}. Check back as your team logs prospects.
+    </div>`;
     return;
   }
-
-  document.getElementById('todayGrid').innerHTML = entries.map(([b,v],i)=>{
+ 
+  wrap.innerHTML = `<div class="today-grid">${entries.map(([b,v],i) => {
     const rate = v.total?((v.yes/v.total)*100).toFixed(1):0;
-    const c = SNAP_COLORS[i%SNAP_COLORS.length];
-    return `<div class="today-cell" style="animation-delay:${i*.04}s;border-top:3px solid ${c}">
+    return `<div class="today-cell" style="border-top:3px solid ${pc(i)};animation-delay:${i*.04}s">
       <div class="today-cell-name">${b}</div>
-      <div class="today-cell-num" style="color:${c}">${v.total}</div>
-      <div class="today-cell-conv" style="color:var(--muted)">${v.yes} converted · ${rate}%</div>
+      <div class="today-cell-num" style="color:${pc(i)}">${v.total}</div>
+      <div class="today-cell-conv">${v.yes} conv · ${rate}%</div>
     </div>`;
-  }).join('');
+  }).join('')}</div>`;
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
 //  INSIGHTS
 // ═══════════════════════════════════════════════════════════
-function renderInsights(st, filter) {
-  const label = filter==='today'?'today':'May-26';
-  const topB = st.branches[0]||{name:'—',total:0,rate:0};
-  const botB = [...st.branches].sort((a,b)=>a.total-b.total)[0]||{name:'—',total:0};
-  const topConvB = [...st.branches].sort((a,b)=>b.rate-a.rate)[0]||{name:'—',rate:0};
-  const zeroConv = st.branches.filter(b=>b.yes===0);
-  const topTL = st.tls[0]||{name:'—',total:0};
-  const topConvTL = [...st.tls].filter(t=>t.total>=2).sort((a,b)=>b.rate-a.rate)[0]||{name:'—',rate:0};
-  const top3sum = st.branches.slice(0,3).reduce((s,b)=>s+b.total,0);
-  const top3pct = st.total?((top3sum/st.total)*100).toFixed(0):0;
-  const avg = st.branches.length?(st.total/st.branches.length).toFixed(1):0;
-  const aboveAvg = st.branches.filter(b=>b.total>avg*1.2).length;
-
+function renderInsights(st, lbl) {
+  if (!st.branches.length) { document.getElementById('insights').innerHTML=''; return; }
+  const topB     = st.branches[0];
+  const botB     = [...st.branches].sort((a,b)=>a.total-b.total)[0];
+  const topConvB = [...st.branches].sort((a,b)=>b.rate-a.rate)[0];
+  const zeroB    = st.branches.filter(b=>b.yes===0);
+  const topTL    = st.tls[0]||{name:'—',total:0,rate:0};
+  const topConvTL= [...st.tls].filter(t=>t.total>=2).sort((a,b)=>b.rate-a.rate)[0]||{name:'—',rate:0};
+  const avg      = st.branches.length?(st.total/st.branches.length).toFixed(1):0;
+  const top3sum  = st.branches.slice(0,3).reduce((s,b)=>s+b.total,0);
+  const top3pct  = st.total?((top3sum/st.total)*100).toFixed(0):0;
+  const avgtl    = st.tls.length?(st.total/st.tls.length).toFixed(1):0;
+ 
   const ins = [
-    `<b>${topB.name}</b> leads ${label} with <b class="info">${topB.total} prospects</b> — ${((topB.total/avg-1)*100).toFixed(0)}% above branch average of ${avg}.`,
-    `Top 3 branches contribute <b class="info">${top3pct}%</b> of total ${label} pipeline (${top3sum} of ${st.total} prospects). High concentration risk.`,
-    `<b>${topConvB.name}</b> has the best conversion rate at <b class="hi">${topConvB.rate}%</b>. Study their qualification process for cross-branch replication.`,
-    `TL <b>${topConvTL.name}</b> is top converter at <b class="hi">${topConvTL.rate}%</b>. Consider pairing them with high-volume, low-conv branches.`,
-    zeroConv.length>0
-      ? `<span class="warn">${zeroConv.length} branch${zeroConv.length>1?'es':''}</span> recorded <span class="warn">zero conversions</span> in ${label}: <b>${zeroConv.map(b=>b.name).join(', ')}</b>. Immediate TL coaching needed.`
-      : `All branches recorded at least one conversion in ${label}. 🎉 Good coverage across the network.`,
-    `Overall conversion rate is <b>${st.rate}%</b>. ${+st.rate<10?'<span class="warn">Below 10% — significantly underperforming. Pipeline quality audit required.</span>':'<span class="hi">Healthy conversion signal.</span>'}`,
-    `TL <b>${topTL.name}</b> (${topTL.branch}) has the highest prospect volume at <b class="info">${topTL.total}</b> but ${topTL.rate<10?'a <span class="warn">low '+topTL.rate+'% conversion</span> — high activity, low quality signal.':'a strong '+topTL.rate+'% conversion — excellent performer.'}`,
-    `<b>${aboveAvg}</b> branch${aboveAvg!==1?'es are':' is'} performing 20%+ above average. Focus management attention on the remaining <b>${st.branches.length-aboveAvg}</b> underperformers.`,
-    `<b>${botB.name}</b> has the lowest volume at <b class="warn">${botB.total} prospects</b>. Check if branch is understaffed or facing lead-generation issues.`,
-    `Average prospects per branch in ${label}: <b class="info">${avg}</b>. TL average: <b class="info">${st.tls.length?(st.total/st.tls.length).toFixed(1):0}</b>. Branches below 50% of avg need immediate resource review.`,
+    `<b>${topB.name}</b> leads ${lbl} with <b class="info">${topB.total} prospects</b> — ${avg>0?((topB.total/avg-1)*100).toFixed(0):0}% above average of ${avg}.`,
+    `Top 3 branches (<b>${st.branches.slice(0,3).map(b=>b.name).join(', ')}</b>) account for <b class="info">${top3pct}%</b> of total pipeline (${top3sum}/${st.total}).`,
+    `<b>${topConvB.name}</b> has the best conversion rate at <b class="hi">${topConvB.rate}%</b>. Replicate their qualification criteria across underperforming branches.`,
+    `TL <b>${topConvTL.name}</b> leads conversion at <b class="hi">${topConvTL.rate}%</b>. Consider deploying them as a coach for low-converting branches.`,
+    zeroB.length>0
+      ? `<span class="warn">${zeroB.length} branch${zeroB.length>1?'es':''} have zero conversions:</span> <b>${zeroB.map(b=>b.name).join(', ')}</b>. Immediate review needed.`
+      : `All branches recorded at least one conversion in ${lbl}. 🎉 Strong network-wide performance.`,
+    `Overall conversion rate is <b>${st.rate}%</b>. ${+st.rate<10?'<span class="warn">Below 10% threshold — pipeline quality audit required.</span>':'<span class="hi">Above 10% benchmark — on track.</span>'}`,
+    `TL <b>${topTL.name}</b> (${topTL.branch}) leads volume at <b class="info">${topTL.total} prospects</b> with a ${topTL.rate<10?'<span class="warn">'+topTL.rate+'% conversion — review lead quality</span>':'<span class="hi">'+topTL.rate+'% conversion — strong performer</span>'}.`,
+    `Average prospects per branch: <b class="info">${avg}</b> · Per TL: <b class="info">${avgtl}</b>. Branches below 50% of average need resource reallocation.`,
+    `<b>${botB.name}</b> has the lowest volume at <b class="warn">${botB.total} prospects</b>. Investigate staffing, lead source, and territory coverage.`,
+    `Chart 6 shows TL projection density per branch. Branches with high avg/TL are efficient — branches with low avg/TL may need more TL capacity or better lead pipelines.`,
   ];
-
-  document.getElementById('insights').innerHTML = ins.map((t,i)=>`
+ 
+  document.getElementById('insights').innerHTML = ins.map((t,i) => `
     <div class="ins-card" style="animation-delay:${i*.04}s">
       <div class="ins-n">${String(i+1).padStart(2,'0')}</div>
       <div class="ins-txt">${t}</div>
     </div>`).join('');
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
-//  FILTER CONTROL
+//  FILTER EVENT HANDLERS
 // ═══════════════════════════════════════════════════════════
-function setFilter(f) {
-  activeFilter = f;
-  document.getElementById('btnMay').classList.toggle('active', f==='may');
-  document.getElementById('btnToday').classList.toggle('active', f==='today');
-  renderAll(f);
+function onMonthChange() {
+  STATE.activeMonth  = document.getElementById('monthSel').value;
+  STATE.activeBranch = null;
+  document.getElementById('drillView').classList.remove('show');
+  renderAll();
 }
-
+ 
+function toggleToday() {
+  STATE.todayOnly = !STATE.todayOnly;
+  document.getElementById('todayToggle').classList.toggle('active', STATE.todayOnly);
+  document.getElementById('todayChk').checked = STATE.todayOnly;
+  renderAll();
+}
+ 
+function onBranchChange() {
+  const val = document.getElementById('branchSel').value;
+  if (val) {
+    setDrillBranch(val);
+  } else {
+    clearDrill();
+  }
+}
+ 
 // ═══════════════════════════════════════════════════════════
 //  COUNTDOWN
 // ═══════════════════════════════════════════════════════════
 function startCountdown() {
   clearInterval(cdTimer);
   cdSecs = REFRESH_MINS * 60;
-  cdTimer = setInterval(()=>{
+  cdTimer = setInterval(() => {
     cdSecs--;
-    if(cdSecs<=0){ refreshData(); return; }
+    if (cdSecs <= 0) { refreshData(); return; }
     const m = String(Math.floor(cdSecs/60)).padStart(2,'0');
     const s = String(cdSecs%60).padStart(2,'0');
     document.getElementById('cdTimer').textContent = `${m}:${s}`;
-  },1000);
+  }, 1000);
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
 //  MAIN REFRESH
 // ═══════════════════════════════════════════════════════════
 async function refreshData() {
   try {
     await fetchData();
-    renderAll(activeFilter);
-    document.getElementById('lastTs').textContent = new Date().toLocaleTimeString('en-IN',{hour12:true});
+    renderAll();
     document.getElementById('errBar').style.display = 'none';
   } catch(e) {
     const eb = document.getElementById('errBar');
     eb.style.display = 'block';
-    eb.textContent = `⚠ Could not fetch live data: ${e.message}. Displaying last loaded data.`;
+    eb.textContent   = `⚠ Could not fetch live data: ${e.message}. Showing last loaded data.`;
   }
   startCountdown();
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
 //  INIT
 // ═══════════════════════════════════════════════════════════
-window.addEventListener('DOMContentLoaded', async ()=>{
+window.addEventListener('DOMContentLoaded', async () => {
   try {
     await fetchData();
-    renderAll('may');
-    document.getElementById('lastTs').textContent = new Date().toLocaleTimeString('en-IN',{hour12:true});
+    renderAll();
   } catch(e) {
     document.getElementById('errBar').style.display = 'block';
-    document.getElementById('errBar').textContent = `⚠ Failed to load: ${e.message}. Check CSV URL and that sheet is published to web.`;
+    document.getElementById('errBar').textContent =
+      `⚠ Failed to load: ${e.message}. Open via a web server (GitHub Pages / localhost) — not from desktop.`;
   }
   document.getElementById('loader').classList.add('hide');
   startCountdown();
@@ -1087,3 +1432,7 @@ window.addEventListener('DOMContentLoaded', async ()=>{
 </script>
 </body>
 </html>
+ 
+
+
+
