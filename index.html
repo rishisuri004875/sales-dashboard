@@ -18,7 +18,7 @@
   --border:   #E0E8F4;
   --shadow:   0 2px 14px rgba(60,90,160,.08);
   --shadow-md:0 4px 24px rgba(60,90,160,.12);
- 
+
   --blue:   #3B82F6; --blue-lt:  #EFF6FF;
   --indigo: #6366F1; --ind-lt:   #EEF2FF;
   --violet: #8B5CF6; --vio-lt:   #F5F3FF;
@@ -28,7 +28,7 @@
   --rose:   #F43F5E; --ros-lt:   #FFF1F2;
   --sky:    #0EA5E9; --sky-lt:   #F0F9FF;
   --pink:   #EC4899; --pnk-lt:   #FDF2F8;
- 
+
   --text:   #1E2A45;
   --text2:  #4A5578;
   --muted:  #94A3C8;
@@ -36,11 +36,11 @@
   --mono:   'DM Mono', monospace;
   --sb-w:   280px;
 }
- 
+
 * { margin:0; padding:0; box-sizing:border-box; }
 html { scroll-behavior:smooth; }
 body { background:var(--bg); color:var(--text); font-family:var(--font); font-size:14px; display:flex; min-height:100vh; }
- 
+
 /* ─── LOADER ─── */
 #loader {
   position:fixed; inset:0; background:#fff; z-index:9999;
@@ -54,7 +54,7 @@ body { background:var(--bg); color:var(--text); font-family:var(--font); font-si
 .load-bar-wrap { width:180px; height:3px; background:#E2E8F4; border-radius:99px; overflow:hidden; }
 .load-bar { height:100%; background:linear-gradient(90deg,var(--blue),var(--indigo)); border-radius:99px; animation:lbar 2s ease infinite; }
 @keyframes lbar { 0%{width:10%} 60%{width:80%} 100%{width:95%} }
- 
+
 /* ─── SIDEBAR ─── */
 .sidebar {
   width:var(--sb-w); min-height:100vh; background:var(--bg2);
@@ -66,7 +66,7 @@ body { background:var(--bg); color:var(--text); font-family:var(--font); font-si
 }
 .sidebar::-webkit-scrollbar { width:3px; }
 .sidebar::-webkit-scrollbar-thumb { background:var(--border); border-radius:99px; }
- 
+
 .sb-logo {
   padding:20px 20px 16px;
   background:linear-gradient(135deg,#1E3A8A,#4F46E5);
@@ -74,14 +74,14 @@ body { background:var(--bg); color:var(--text); font-family:var(--font); font-si
 }
 .sb-logo-title { font-size:15px; font-weight:800; letter-spacing:-.2px; }
 .sb-logo-sub   { font-size:10px; color:rgba(255,255,255,.55); font-family:var(--mono); margin-top:3px; }
- 
+
 .sb-section { padding:16px 16px 0; }
 .sb-section-label {
   font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase;
   color:var(--muted); margin-bottom:8px; display:flex; align-items:center; gap:6px;
 }
 .sb-section-label::after { content:''; flex:1; height:1px; background:var(--border); }
- 
+
 /* Filter controls */
 .sb-ctrl { margin-bottom:12px; }
 .sb-ctrl label { font-size:11px; font-weight:600; color:var(--text2); display:block; margin-bottom:5px; }
@@ -91,7 +91,7 @@ body { background:var(--bg); color:var(--text); font-family:var(--font); font-si
   cursor:pointer; outline:none; transition:border-color .18s;
 }
 .sb-select:focus { border-color:var(--blue); }
- 
+
 .sb-toggle {
   display:flex; align-items:center; gap:8px; padding:9px 12px;
   background:var(--bg3); border:1.5px solid var(--border); border-radius:9px;
@@ -112,7 +112,7 @@ body { background:var(--bg); color:var(--text); font-family:var(--font); font-si
 .sb-toggle.active .sb-toggle-dot { background:var(--green); }
 .sb-toggle.active .sb-toggle-dot::after { transform:translateX(14px); }
 .sb-toggle-txt { font-size:11px; font-weight:600; color:var(--text2); line-height:1.3; }
- 
+
 /* Branch drill-down panel */
 .sb-drill {
   background:linear-gradient(135deg,var(--ind-lt),var(--vio-lt));
@@ -132,7 +132,7 @@ body { background:var(--bg); color:var(--text); font-family:var(--font); font-si
 .sb-drill-stat { background:var(--bg2); border-radius:8px; padding:8px; text-align:center; }
 .sb-drill-stat-val { font-size:18px; font-weight:800; }
 .sb-drill-stat-lbl { font-size:9px; color:var(--muted); font-family:var(--mono); margin-top:2px; }
- 
+
 /* Sidebar refresh */
 .sb-refresh-wrap { padding:16px; margin-top:auto; border-top:1px solid var(--border); }
 .sb-refresh-btn {
@@ -145,10 +145,10 @@ body { background:var(--bg); color:var(--text); font-family:var(--font); font-si
 .sb-ts b { color:var(--blue); }
 .sb-countdown { font-family:var(--mono); font-size:10px; color:var(--muted); text-align:center; margin-top:4px; }
 .sb-countdown span { color:var(--amber); font-weight:600; }
- 
+
 /* ─── MAIN CONTENT ─── */
 .main { margin-left:var(--sb-w); flex:1; padding:20px 22px 48px; min-width:0; }
- 
+
 /* ─── HEADER ─── */
 .hdr {
   background:linear-gradient(135deg,#1E3A8A 0%,#3B4FCB 55%,#6D28D9 100%);
@@ -167,7 +167,7 @@ body { background:var(--bg); color:var(--text); font-family:var(--font); font-si
 .hdr-pill   { background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.2); border-radius:12px; padding:10px 16px; text-align:center; }
 .hdr-pill-v { font-size:22px; font-weight:800; color:#fff; line-height:1; }
 .hdr-pill-l { font-size:9px; color:rgba(255,255,255,.6); font-family:var(--mono); margin-top:3px; }
- 
+
 /* ─── TODAY BANNER ─── */
 .today-banner {
   background:linear-gradient(135deg,#ECFDF5,#D1FAE5); border:1.5px solid #6EE7B7;
@@ -179,17 +179,17 @@ body { background:var(--bg); color:var(--text); font-family:var(--font); font-si
 @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.4)} 50%{box-shadow:0 0 0 6px rgba(34,197,94,0)} }
 .today-txt { font-size:13px; font-weight:700; color:#065F46; }
 .today-txt span { font-family:var(--mono); }
- 
+
 /* ─── ERROR BAR ─── */
 .err-bar { background:#FFF1F2; border:1.5px solid #FECDD3; border-radius:10px; padding:11px 16px; color:#BE123C; font-size:12px; margin-bottom:14px; display:none; }
- 
+
 /* ─── SECTION HEADER ─── */
 .sec { display:flex; align-items:center; gap:10px; margin:22px 0 13px; }
 .sec-icon { width:28px; height:28px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
 .sec-title { font-size:14px; font-weight:800; }
 .sec-sub   { font-size:10px; color:var(--muted); font-family:var(--mono); }
 .sec-line  { flex:1; height:1px; background:var(--border); }
- 
+
 /* ─── KPI GRID ─── */
 .kpi-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:11px; }
 .kpi {
@@ -205,7 +205,7 @@ body { background:var(--bg); color:var(--text); font-family:var(--font); font-si
 .kpi-val   { font-size:22px; font-weight:800; line-height:1.1; }
 .kpi-val.sm{ font-size:14px; }
 .kpi-sub   { font-size:9px; color:var(--muted); margin-top:5px; font-family:var(--mono); }
- 
+
 /* ─── TOP/BOT GRID ─── */
 .tb-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:11px; }
 .tb-card {
@@ -220,7 +220,7 @@ body { background:var(--bg); color:var(--text); font-family:var(--font); font-si
 .tb-stats  { display:flex; gap:10px; }
 .tb-sv     { font-size:18px; font-weight:800; }
 .tb-sl     { font-size:9px; color:var(--muted); font-family:var(--mono); }
- 
+
 /* ─── CHART CARDS ─── */
 .grid2  { display:grid; grid-template-columns:1fr 1fr; gap:13px; }
 .grid21 { display:grid; grid-template-columns:2fr 1fr; gap:13px; }
@@ -233,7 +233,7 @@ body { background:var(--bg); color:var(--text); font-family:var(--font); font-si
 .card-title{ font-size:13px; font-weight:800; }
 .card-sub  { font-size:10px; color:var(--muted); font-family:var(--mono); margin-top:2px; }
 .card-tag  { font-size:9px; font-weight:700; padding:3px 9px; border-radius:99px; background:var(--blue-lt); color:var(--blue); white-space:nowrap; flex-shrink:0; }
- 
+
 /* Branch selector in chart card */
 .card-filter {
   display:flex; align-items:center; gap:8px; margin-bottom:12px;
@@ -244,7 +244,7 @@ body { background:var(--bg); color:var(--text); font-family:var(--font); font-si
   flex:1; border:none; background:transparent; font-family:var(--font); font-size:12px;
   color:var(--text); cursor:pointer; outline:none;
 }
- 
+
 /* ─── DRILL-DOWN VIEW ─── */
 .drill-view {
   background:linear-gradient(135deg,var(--ind-lt),var(--vio-lt));
@@ -260,7 +260,7 @@ body { background:var(--bg); color:var(--text); font-family:var(--font); font-si
   font-family:var(--font); transition:background .18s;
 }
 .drill-close:hover { background:#FFE4E6; }
- 
+
 /* ─── HEATMAP ─── */
 .hmap { display:grid; grid-template-columns:repeat(3,1fr); gap:7px; }
 .hmap-cell {
@@ -272,7 +272,7 @@ body { background:var(--bg); color:var(--text); font-family:var(--font); font-si
 .hmap-name  { font-size:9px; font-weight:700; margin-bottom:4px; }
 .hmap-count { font-size:19px; font-weight:800; }
 .hmap-rate  { font-size:9px; font-family:var(--mono); margin-top:2px; }
- 
+
 /* ─── LEADERBOARD ─── */
 .lb-wrap { display:flex; flex-direction:column; gap:5px; max-height:360px; overflow-y:auto; padding-right:2px; }
 .lb-wrap::-webkit-scrollbar { width:3px; }
@@ -290,7 +290,7 @@ body { background:var(--bg); color:var(--text); font-family:var(--font); font-si
 .lb-bar    { height:100%; border-radius:99px; }
 .lb-num    { font-size:11px; font-weight:700; font-family:var(--mono); color:var(--blue); min-width:24px; text-align:right; }
 .lb-pct    { font-size:9px; font-family:var(--mono); min-width:30px; text-align:right; }
- 
+
 /* ─── FUNNEL ─── */
 .funnel-wrap { display:flex; flex-direction:column; align-items:center; gap:3px; padding:8px 0; }
 .f-stage { border-radius:9px; border:1.5px solid; padding:11px 14px; display:flex; align-items:center; justify-content:space-between; transition:opacity .18s; }
@@ -299,7 +299,7 @@ body { background:var(--bg); color:var(--text); font-family:var(--font); font-si
 .f-sub { font-size:9px; font-family:var(--mono); margin-top:2px; }
 .f-num { font-size:22px; font-weight:800; font-family:var(--mono); }
 .f-drop { font-size:9px; font-family:var(--mono); color:var(--rose); align-self:flex-start; margin-left:8px; }
- 
+
 /* ─── TODAY SNAPSHOT ─── */
 .today-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:9px; }
 .today-cell {
@@ -311,7 +311,7 @@ body { background:var(--bg); color:var(--text); font-family:var(--font); font-si
 .today-cell-name { font-size:10px; font-weight:700; color:var(--text2); margin-bottom:7px; }
 .today-cell-num  { font-size:26px; font-weight:800; }
 .today-cell-conv { font-size:9px; font-family:var(--mono); color:var(--muted); margin-top:3px; }
- 
+
 /* ─── EMPTY STATE ─── */
 .empty-state {
   text-align:center; padding:32px 20px; color:var(--muted);
@@ -320,7 +320,7 @@ body { background:var(--bg); color:var(--text); font-family:var(--font); font-si
 }
 .empty-state .empty-icon { font-size:32px; margin-bottom:10px; }
 .empty-state .empty-title { font-size:14px; font-weight:700; color:var(--text2); margin-bottom:6px; font-family:var(--font); }
- 
+
 /* ─── INSIGHTS ─── */
 .ins-grid { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
 .ins-card {
@@ -335,11 +335,92 @@ body { background:var(--bg); color:var(--text); font-family:var(--font); font-si
 .ins-txt .hi  { color:var(--green); font-weight:700; }
 .ins-txt .warn{ color:var(--rose); font-weight:700; }
 .ins-txt .info{ color:var(--blue); font-weight:700; }
- 
+
 .footer { text-align:center; margin-top:28px; padding-top:18px; border-top:1px solid var(--border); font-family:var(--mono); font-size:10px; color:var(--muted); }
- 
+
 @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
- 
+
+/* ─── VIEWER COUNTER WIDGET ─── */
+#viewerWidget {
+  position:fixed; top:16px; right:20px; z-index:999;
+  display:flex; align-items:center; gap:8px;
+}
+.vw-pill {
+  display:flex; align-items:center; gap:6px;
+  background:var(--bg2); border:1.5px solid var(--border);
+  border-radius:99px; padding:6px 13px 6px 9px;
+  box-shadow:var(--shadow-md); cursor:default;
+  transition:box-shadow .2s;
+}
+.vw-pill:hover { box-shadow:var(--shadow); }
+.vw-dot { width:8px; height:8px; border-radius:50%; background:var(--green); animation:pulse 1.5s ease infinite; flex-shrink:0; }
+.vw-dot.grey { background:var(--muted); animation:none; }
+.vw-val { font-size:13px; font-weight:800; color:var(--text); font-family:var(--mono); }
+.vw-lbl { font-size:9px; color:var(--muted); font-family:var(--mono); }
+.vw-sep { width:1px; height:24px; background:var(--border); }
+
+/* ─── MULTI DATE FILTER ─── */
+.date-multi-wrap {
+  background:var(--bg3); border:1.5px solid var(--border); border-radius:9px;
+  padding:8px 10px; max-height:160px; overflow-y:auto;
+}
+.date-multi-wrap::-webkit-scrollbar { width:3px; }
+.date-multi-wrap::-webkit-scrollbar-thumb { background:var(--border); border-radius:99px; }
+.date-chk-item {
+  display:flex; align-items:center; gap:7px; padding:4px 3px;
+  border-radius:6px; cursor:pointer; transition:background .15s;
+  font-size:11px; color:var(--text2); font-weight:500; user-select:none;
+}
+.date-chk-item:hover { background:var(--bg2); }
+.date-chk-item input[type=checkbox] { accent-color:var(--blue); width:13px; height:13px; cursor:pointer; flex-shrink:0; }
+.date-multi-actions { display:flex; gap:6px; margin-top:7px; }
+.date-action-btn {
+  flex:1; padding:5px; font-size:10px; font-weight:700; font-family:var(--font);
+  border-radius:6px; border:1.5px solid var(--border); cursor:pointer; transition:all .15s;
+  background:var(--bg3); color:var(--text2);
+}
+.date-action-btn:hover { background:var(--blue-lt); border-color:var(--blue); color:var(--blue); }
+.date-sel-count { font-size:10px; font-family:var(--mono); color:var(--blue); font-weight:600; margin-top:5px; }
+
+/* ─── WEEKLY SNAPSHOT ─── */
+.week-grid {
+  display:grid; gap:12px;
+}
+.week-row-card {
+  background:var(--bg2); border:1px solid var(--border); border-radius:13px;
+  overflow:hidden; box-shadow:var(--shadow); animation:fadeUp .4s ease both;
+}
+.week-row-hdr {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:10px 16px; border-bottom:1px solid var(--border);
+  background:var(--bg3);
+}
+.week-row-label { font-size:12px; font-weight:800; color:var(--text); }
+.week-row-total { font-size:11px; font-family:var(--mono); color:var(--blue); font-weight:600; }
+.week-cells { display:flex; gap:0; }
+.week-day-cell {
+  flex:1; padding:10px 6px; text-align:center; border-right:1px solid var(--border);
+  transition:background .15s;
+}
+.week-day-cell:last-child { border-right:none; }
+.week-day-cell:hover { background:var(--bg3); }
+.week-day-name { font-size:9px; font-weight:700; color:var(--muted); text-transform:uppercase; margin-bottom:4px; font-family:var(--mono); }
+.week-day-date { font-size:8px; color:var(--muted); font-family:var(--mono); margin-bottom:6px; }
+.week-day-num { font-size:18px; font-weight:800; }
+.week-day-conv { font-size:8px; font-family:var(--mono); color:var(--muted); margin-top:2px; }
+.week-day-bar { height:3px; border-radius:99px; margin:5px 4px 0; }
+.week-day-cell.today-col { background:linear-gradient(180deg,var(--blue-lt),transparent); }
+.week-day-cell.today-col .week-day-name { color:var(--blue); }
+.week-week-nav { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+.week-nav-btn {
+  padding:6px 14px; border-radius:8px; border:1.5px solid var(--border);
+  background:var(--bg2); font-family:var(--font); font-size:12px; font-weight:600;
+  color:var(--text2); cursor:pointer; transition:all .15s;
+}
+.week-nav-btn:hover { background:var(--blue-lt); border-color:var(--blue); color:var(--blue); }
+.week-nav-label { font-size:13px; font-weight:700; color:var(--text); flex:1; text-align:center; }
+.week-conv-badge { font-size:9px; font-weight:700; padding:2px 7px; border-radius:99px; background:var(--grn-lt); color:var(--green); margin-top:3px; display:inline-block; }
+
 /* ─── RESPONSIVE ─── */
 @media(max-width:1300px){ .kpi-grid{grid-template-columns:repeat(4,1fr)} .tb-grid{grid-template-columns:1fr 1fr} }
 @media(max-width:1000px){ .grid2,.grid21,.grid3{grid-template-columns:1fr} .main{margin-left:0} .sidebar{display:none} }
@@ -347,24 +428,43 @@ body { background:var(--bg); color:var(--text); font-family:var(--font); font-si
 </style>
 </head>
 <body>
- 
+
+<!-- VIEWER COUNTER WIDGET -->
+<div id="viewerWidget">
+  <div class="vw-pill" title="Live viewers right now">
+    <div class="vw-dot" id="vwDot"></div>
+    <div>
+      <div class="vw-val" id="vwLive">1</div>
+      <div class="vw-lbl">live now</div>
+    </div>
+  </div>
+  <div class="vw-sep"></div>
+  <div class="vw-pill" title="Total page views today">
+    <div class="vw-dot grey"></div>
+    <div>
+      <div class="vw-val" id="vwTotal">—</div>
+      <div class="vw-lbl">views today</div>
+    </div>
+  </div>
+</div>
+
 <!-- LOADER -->
 <div id="loader">
   <div class="spin"></div>
   <div class="load-bar-wrap"><div class="load-bar"></div></div>
   <div class="load-txt">Fetching live data from Google Sheets…</div>
 </div>
- 
+
 <!-- ═══════════════════ SIDEBAR ═══════════════════ -->
 <aside class="sidebar">
   <div class="sb-logo">
     <div class="sb-logo-title">📊 Sales Intelligence</div>
     <div class="sb-logo-sub">Live · May-26 · L2 Master Sheet</div>
   </div>
- 
+
   <div class="sb-section">
     <div class="sb-section-label">Filters</div>
- 
+
     <!-- Month Filter -->
     <div class="sb-ctrl">
       <label>📅 Month</label>
@@ -372,7 +472,7 @@ body { background:var(--bg); color:var(--text); font-family:var(--font); font-si
         <option value="">Loading…</option>
       </select>
     </div>
- 
+
     <!-- Today Toggle -->
     <div class="sb-ctrl">
       <label>⚡ Realtime View</label>
@@ -382,7 +482,21 @@ body { background:var(--bg); color:var(--text); font-family:var(--font); font-si
         <div class="sb-toggle-txt">View Today's Data Only</div>
       </div>
     </div>
- 
+
+    <!-- Multi-Date Filter -->
+    <div class="sb-ctrl">
+      <label>📆 Select Specific Dates</label>
+      <div class="date-multi-wrap" id="dateMultiWrap">
+        <div style="font-size:10px;color:var(--muted);font-family:var(--mono)">Loading dates…</div>
+      </div>
+      <div class="date-multi-actions">
+        <button class="date-action-btn" onclick="selectAllDates()">All</button>
+        <button class="date-action-btn" onclick="clearAllDates()">None</button>
+        <button class="date-action-btn" onclick="selectThisWeek()">This Week</button>
+      </div>
+      <div class="date-sel-count" id="dateSel Count">All dates selected</div>
+    </div>
+
     <!-- Branch Filter -->
     <div class="sb-ctrl">
       <label>🏢 Branch Filter</label>
@@ -390,7 +504,7 @@ body { background:var(--bg); color:var(--text); font-family:var(--font); font-si
         <option value="">All Branches</option>
       </select>
     </div>
- 
+
     <!-- Drill-Down Panel -->
     <div class="sb-drill" id="drillPanel">
       <div class="sb-drill-title">🔍 Branch Drill-Down</div>
@@ -414,17 +528,17 @@ body { background:var(--bg); color:var(--text); font-family:var(--font); font-si
       </div>
     </div>
   </div>
- 
+
   <div class="sb-refresh-wrap">
     <button class="sb-refresh-btn" onclick="refreshData()">↻ Refresh Now</button>
     <div class="sb-ts">Updated: <b id="lastTs">—</b></div>
     <div class="sb-countdown">Next: <span id="cdTimer">05:00</span></div>
   </div>
 </aside>
- 
+
 <!-- ═══════════════════ MAIN ═══════════════════ -->
 <main class="main">
- 
+
   <!-- HEADER -->
   <div class="hdr">
     <div>
@@ -437,24 +551,24 @@ body { background:var(--bg); color:var(--text); font-family:var(--font); font-si
       <div class="hdr-pill"><div class="hdr-pill-v" id="hdrRate">—</div><div class="hdr-pill-l">Conv Rate</div></div>
     </div>
   </div>
- 
+
   <div class="err-bar" id="errBar"></div>
   <div class="today-banner" id="todayBanner">
     <div class="live-dot"></div>
     <div class="today-txt">🔴 LIVE — Showing Today's Prospects Only &nbsp;·&nbsp; <span id="todayDateTxt"></span></div>
   </div>
- 
+
   <!-- §01 KPIs -->
   <div class="sec"><div class="sec-icon" style="background:#EFF6FF">📌</div><div class="sec-title">Executive Summary</div><div class="sec-sub" id="kpiLbl">— May-26</div><div class="sec-line"></div></div>
   <div class="kpi-grid" id="kpiGrid"></div>
- 
+
   <!-- §02 Top/Bottom -->
   <div class="sec" style="margin-top:20px"><div class="sec-icon" style="background:#F0FDF4">🏆</div><div class="sec-title">Top &amp; Bottom Performers</div><div class="sec-sub" id="tbLbl">— May-26</div><div class="sec-line"></div></div>
   <div class="tb-grid" id="tbGrid"></div>
- 
+
   <!-- §03 Branch Analytics -->
   <div class="sec" style="margin-top:20px"><div class="sec-icon" style="background:#EEF2FF">🏢</div><div class="sec-title">Branch Analytics</div><div class="sec-sub" id="branchLbl">— May-26</div><div class="sec-line"></div></div>
- 
+
   <!-- Drill-down TL view -->
   <div class="drill-view" id="drillView">
     <div class="drill-hdr">
@@ -463,7 +577,7 @@ body { background:var(--bg); color:var(--text); font-family:var(--font); font-si
     </div>
     <canvas id="cDrill" height="160"></canvas>
   </div>
- 
+
   <div class="grid2" style="margin-bottom:13px">
     <div class="card">
       <div class="card-hdr">
@@ -480,7 +594,7 @@ body { background:var(--bg); color:var(--text); font-family:var(--font); font-si
       <canvas id="cConv" height="260"></canvas>
     </div>
   </div>
- 
+
   <!-- §04 TL Analytics -->
   <div class="sec" style="margin-top:4px"><div class="sec-icon" style="background:#F5F3FF">👥</div><div class="sec-title">Team Leader Analytics</div><div class="sec-sub" id="tlLbl">— May-26</div><div class="sec-line"></div></div>
   <div class="grid21" style="margin-bottom:13px">
@@ -499,7 +613,7 @@ body { background:var(--bg); color:var(--text); font-family:var(--font); font-si
       <canvas id="cTLConv" height="300"></canvas>
     </div>
   </div>
- 
+
   <!-- §05 Snapshots -->
   <div class="sec"><div class="sec-icon" style="background:#F0FDFA">📊</div><div class="sec-title">Graphical Snapshots</div><div class="sec-sub" id="snapLbl">— May-26</div><div class="sec-line"></div></div>
   <div class="grid3" style="margin-bottom:13px">
@@ -523,7 +637,7 @@ body { background:var(--bg); color:var(--text); font-family:var(--font); font-si
       <div class="funnel-wrap" id="funnel"></div>
     </div>
   </div>
- 
+
   <!-- §06 Daily Trend -->
   <div class="card" style="margin-bottom:13px">
     <div class="card-hdr">
@@ -532,7 +646,7 @@ body { background:var(--bg); color:var(--text); font-family:var(--font); font-si
     </div>
     <canvas id="cDaily" height="160"></canvas>
   </div>
- 
+
   <!-- §07 NEW: Projection per TL by Branch -->
   <div class="sec"><div class="sec-icon" style="background:#FFFBEB">🔮</div><div class="sec-title">Chart 6 — Avg Forward Projection Volume per TL by Branch</div><div class="sec-sub" id="projLbl">— May-26</div><div class="sec-line"></div></div>
   <div class="card" style="margin-bottom:13px">
@@ -542,25 +656,39 @@ body { background:var(--bg); color:var(--text); font-family:var(--font); font-si
     </div>
     <canvas id="cProjection" height="200"></canvas>
   </div>
- 
+
+  <!-- §W Weekly Location Snapshot -->
+  <div class="sec" style="margin-top:20px">
+    <div class="sec-icon" style="background:#F0F9FF">📅</div>
+    <div class="sec-title">Weekly Location-wise Prospect Snapshot</div>
+    <div class="sec-sub" id="weeklyLbl">— Current Week</div>
+    <div class="sec-line"></div>
+  </div>
+  <div class="week-week-nav">
+    <button class="week-nav-btn" onclick="shiftWeek(-1)">← Prev Week</button>
+    <div class="week-nav-label" id="weekNavLabel">Loading…</div>
+    <button class="week-nav-btn" onclick="shiftWeek(1)">Next Week →</button>
+  </div>
+  <div class="week-grid" id="weeklyGrid"></div>
+
   <!-- §08 Today Snapshot — always live -->
   <div class="sec"><div class="sec-icon" style="background:#ECFDF5">🔴</div><div class="sec-title">Today's Live Snapshot — Branch-wise</div><div class="sec-sub" id="todaySnapDate"></div><div class="sec-line"></div></div>
   <div id="todayGridWrap"></div>
- 
+
   <!-- §09 Insights -->
   <div class="sec" style="margin-top:20px"><div class="sec-icon" style="background:#FFFBEB">💡</div><div class="sec-title">Key Takeaways &amp; Action Signals</div><div class="sec-sub" id="insLbl">— May-26</div><div class="sec-line"></div></div>
   <div class="ins-grid" id="insights"></div>
- 
+
   <div class="footer">Sales Projection &amp; Conversion Intelligence · Source: L2 Master Projection Sheet · Auto-refreshes every 5 min</div>
 </main>
- 
+
 <script>
 // ═══════════════════════════════════════════════════════════
 //  CONFIG
 // ═══════════════════════════════════════════════════════════
 const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSg9GKvS6mn8tS8ieysQ1nv0UwWlULNwh4-bi1D4NXbdgw-WO-Tlj0Z2gg7JK4N_2LEdZ08Ffs7VsHi/pub?gid=1119571672&single=true&output=csv';
 const REFRESH_MINS = 5;
- 
+
 // ═══════════════════════════════════════════════════════════
 //  SESSION STATE (replaces Streamlit st.session_state)
 // ═══════════════════════════════════════════════════════════
@@ -569,14 +697,16 @@ const STATE = {
   availMonths:   [],
   activeMonth:   'May-26',
   todayOnly:     false,
-  activeBranch:  null,    // drill-down branch
+  activeBranch:  null,
+  selectedDates: null,   // null = all, Set of 'M/D/YYYY' strings = filtered
+  weekOffset:    0,      // 0 = current week, -1 = last week, etc.
   charts:        {},
 };
- 
+
 let currentStats = null;
 let cdSecs = REFRESH_MINS * 60;
 let cdTimer = null;
- 
+
 // ═══════════════════════════════════════════════════════════
 //  PALETTE
 // ═══════════════════════════════════════════════════════════
@@ -584,12 +714,12 @@ const PAL = ['#3B82F6','#6366F1','#8B5CF6','#14B8A6','#22C55E',
              '#F59E0B','#F43F5E','#0EA5E9','#EC4899','#10B981',
              '#EF4444','#F97316','#84CC16','#06B6D4','#A855F7'];
 const pc = i => PAL[i % PAL.length];
- 
+
 Chart.register(ChartDataLabels);
 Chart.defaults.font.family = "'DM Mono', monospace";
 Chart.defaults.font.size   = 11;
 Chart.defaults.color       = '#94A3C8';
- 
+
 // ═══════════════════════════════════════════════════════════
 //  CSV PARSER
 // ═══════════════════════════════════════════════════════════
@@ -611,7 +741,7 @@ function parseCSV(text) {
     return obj;
   }).filter(r => r['Location'] && r['Location'].length > 0);
 }
- 
+
 // ═══════════════════════════════════════════════════════════
 //  FETCH
 // ═══════════════════════════════════════════════════════════
@@ -619,31 +749,34 @@ async function fetchData() {
   const res  = await fetch(CSV_URL + '&cb=' + Date.now());
   const text = await res.text();
   STATE.allRows = parseCSV(text);
- 
+
   // Extract unique months from Col F
   const months = [...new Set(STATE.allRows.map(r => r['Month']).filter(Boolean))].sort();
   STATE.availMonths = months;
- 
+
   // Populate month dropdown
   const mSel = document.getElementById('monthSel');
   mSel.innerHTML = months.map(m =>
     `<option value="${m}" ${m === STATE.activeMonth ? 'selected' : ''}>${m}</option>`
   ).join('');
- 
+
   // Populate branch dropdown & leaderboard branch filter
   const branches = [...new Set(STATE.allRows.map(r => r['Location']).filter(Boolean))].sort();
   const bSel = document.getElementById('branchSel');
   bSel.innerHTML = `<option value="">All Branches</option>` +
     branches.map(b => `<option value="${b}">${b}</option>`).join('');
- 
+
   const lbSel = document.getElementById('lbBranchSel');
   lbSel.innerHTML = `<option value="">All Branches</option>` +
     branches.map(b => `<option value="${b}">${b}</option>`).join('');
- 
+
   document.getElementById('lastTs').textContent =
     new Date().toLocaleTimeString('en-IN', { hour12:true });
+
+  // Populate multi-date filter
+  populateDateFilter();
 }
- 
+
 // ═══════════════════════════════════════════════════════════
 //  FILTERING
 // ═══════════════════════════════════════════════════════════
@@ -654,10 +787,14 @@ function todayStr() {
 function todayDisplay() {
   return new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
 }
- 
+
 function getFilteredRows() {
   let rows = STATE.allRows.filter(r => r['Month'] === STATE.activeMonth);
-  if (STATE.todayOnly) {
+
+  // Multi-date filter (overrides todayOnly if active)
+  if (STATE.selectedDates !== null && STATE.selectedDates.size > 0) {
+    rows = rows.filter(r => STATE.selectedDates.has((r['Date'] || '').trim()));
+  } else if (STATE.todayOnly) {
     const td = new Date();
     rows = rows.filter(r => {
       const p = (r['Date'] || '').split('/');
@@ -665,12 +802,13 @@ function getFilteredRows() {
       return +p[0] === td.getMonth()+1 && +p[1] === td.getDate() && +p[2] === td.getFullYear();
     });
   }
+
   if (STATE.activeBranch) {
     rows = rows.filter(r => r['Location'] === STATE.activeBranch);
   }
   return rows;
 }
- 
+
 // ═══════════════════════════════════════════════════════════
 //  STATS COMPUTATION
 // ═══════════════════════════════════════════════════════════
@@ -678,7 +816,7 @@ function cleanTL(n) {
   if (!n || /^\d/.test(n) || n.includes('/')) return null;
   return n.trim();
 }
- 
+
 function computeStats(rows) {
   const bMap = {}, tMap = {};
   rows.forEach(r => {
@@ -696,23 +834,23 @@ function computeStats(rows) {
       if (yes) tMap[tl].yes++;
     }
   });
- 
+
   const branches = Object.entries(bMap).map(([n, v]) => ({
     name:n, total:v.total, yes:v.yes, tlCount:v.tls.size,
     rate: v.total ? +((v.yes/v.total)*100).toFixed(1) : 0,
     avgPerTL: v.tls.size ? +(v.total/v.tls.size).toFixed(1) : v.total,
   })).sort((a,b) => b.total - a.total);
- 
+
   const tls = Object.entries(tMap).map(([n, v]) => ({
     name:n, branch:v.branch, total:v.total, yes:v.yes,
     rate: v.total ? +((v.yes/v.total)*100).toFixed(1) : 0,
   })).sort((a,b) => b.total - a.total);
- 
+
   const total    = rows.length;
   const totalYes = rows.filter(r => (r['Conversion']||'').toLowerCase()==='yes').length;
   return { branches, tls, total, totalYes, rate: total ? +((totalYes/total)*100).toFixed(1) : 0 };
 }
- 
+
 // ═══════════════════════════════════════════════════════════
 //  PERIOD LABEL
 // ═══════════════════════════════════════════════════════════
@@ -722,7 +860,7 @@ function getPeriodLabel() {
   if (STATE.activeBranch) lbl += ' · ' + STATE.activeBranch;
   return lbl;
 }
- 
+
 function updateLabels(lbl) {
   ['kpiLbl','tbLbl','branchLbl','tlLbl','snapLbl','insLbl','projLbl'].forEach(id => {
     const el = document.getElementById(id);
@@ -733,14 +871,14 @@ function updateLabels(lbl) {
     if (el) el.textContent = lbl;
   });
 }
- 
+
 // ═══════════════════════════════════════════════════════════
 //  DESTROY CHART
 // ═══════════════════════════════════════════════════════════
 function dc(id) {
   if (STATE.charts[id]) { STATE.charts[id].destroy(); delete STATE.charts[id]; }
 }
- 
+
 // ═══════════════════════════════════════════════════════════
 //  CHART DEFAULTS — datalabels config
 // ═══════════════════════════════════════════════════════════
@@ -753,7 +891,7 @@ function dlCfg(color='#1E2A45', anchor='end', align='end', offset=4) {
     formatter: v => v === 0 ? '' : v,
   };
 }
- 
+
 // ═══════════════════════════════════════════════════════════
 //  RENDER ALL
 // ═══════════════════════════════════════════════════════════
@@ -761,30 +899,30 @@ function renderAll() {
   const rows = getFilteredRows();
   const st   = computeStats(rows);
   currentStats = st;
- 
+
   const lbl = getPeriodLabel();
   updateLabels(lbl);
- 
+
   // Header
   document.getElementById('hdrTotal').textContent = st.total.toLocaleString();
   document.getElementById('hdrConv').textContent  = st.totalYes;
   document.getElementById('hdrRate').textContent  = st.rate + '%';
   document.getElementById('hdrSub').textContent   =
     `${lbl} · ${st.branches.length} Branches · ${st.tls.length} TLs`;
- 
+
   // Today banner
   const banner = document.getElementById('todayBanner');
   banner.classList.toggle('show', STATE.todayOnly);
   document.getElementById('todayDateTxt').textContent = todayDisplay();
- 
+
   // Drill panel
   updateDrillPanel(st);
- 
+
   if (st.total === 0 && (STATE.todayOnly || STATE.activeBranch)) {
     showEmptyState();
     return;
   }
- 
+
   renderKPI(st, lbl);
   renderTopBot(st);
   renderChart1(st);
@@ -796,15 +934,15 @@ function renderAll() {
   renderFunnel(st);
   renderChart6(st);
   renderInsights(st, lbl);
- 
+
   // Always full month for daily trend
   const mayRows = STATE.allRows.filter(r => r['Month'] === STATE.activeMonth);
   renderChartDaily(mayRows);
- 
+
   // Always today for snapshot
   renderTodaySnap();
 }
- 
+
 function showEmptyState() {
   const sections = ['kpiGrid','tbGrid','hmap','lboard','funnel','insights'];
   const msg = `<div class="empty-state">
@@ -821,7 +959,7 @@ function showEmptyState() {
   document.getElementById('funnel').innerHTML = msg;
   ['cBranch','cConv','cTL','cTLConv','cProjection'].forEach(id => dc(id));
 }
- 
+
 // ═══════════════════════════════════════════════════════════
 //  KPI
 // ═══════════════════════════════════════════════════════════
@@ -831,7 +969,7 @@ function renderKPI(st, lbl) {
   const botB  = [...st.branches].sort((a,b)=>a.total-b.total)[0] || { name:'—', total:0 };
   const topTL = st.tls[0] || { name:'—', total:0, branch:'—' };
   const topConvTL = [...st.tls].filter(t=>t.total>=2).sort((a,b)=>b.rate-a.rate)[0] || { name:'—', rate:0 };
- 
+
   const cards = [
     { icon:'🎯', lbl:'Total Prospects',   val:st.total,      sub:lbl,                           stripe:'#3B82F6', ibg:'#EFF6FF', vc:'var(--blue)' },
     { icon:'✅', lbl:'Conversions',       val:st.totalYes,   sub:'Col G = Yes',                  stripe:'#22C55E', ibg:'#F0FDF4', vc:'var(--green)' },
@@ -844,7 +982,7 @@ function renderKPI(st, lbl) {
     { icon:'🔥', lbl:'Best Conv. TL',     val:topConvTL.name,sub:`${topConvTL.rate}% rate`,      stripe:'#F59E0B', ibg:'#FFFBEB', vc:'var(--amber)', sm:true },
     { icon:'📊', lbl:'Avg / Branch',      val:avg_b,         sub:'Mean prospect count',          stripe:'#14B8A6', ibg:'#F0FDFA', vc:'var(--teal)' },
   ];
- 
+
   document.getElementById('kpiGrid').innerHTML = cards.map((c,i) => `
     <div class="kpi" style="animation-delay:${i*.04}s">
       <div class="kpi-stripe" style="background:${c.stripe}"></div>
@@ -854,7 +992,7 @@ function renderKPI(st, lbl) {
       <div class="kpi-sub">${c.sub}</div>
     </div>`).join('');
 }
- 
+
 // ═══════════════════════════════════════════════════════════
 //  TOP / BOTTOM
 // ═══════════════════════════════════════════════════════════
@@ -863,14 +1001,14 @@ function renderTopBot(st) {
   const botB    = [...st.branches].sort((a,b)=>a.total-b.total)[0] || { name:'—', total:0, yes:0, rate:0 };
   const topTL   = st.tls[0] || { name:'—', total:0, yes:0, rate:0, branch:'—' };
   const botTL   = [...st.tls].sort((a,b)=>a.total-b.total)[0] || { name:'—', total:0, yes:0, rate:0, branch:'—' };
- 
+
   const defs = [
     { badge:'🏆 Top Branch',    bc:'#166534', bb:'#DCFCE7', name:topB.name, br:'Highest prospect volume', p:topB.total, c:topB.yes, r:topB.rate, acc:'#22C55E' },
     { badge:'⚠️ Lowest Branch', bc:'#9F1239', bb:'#FFE4E6', name:botB.name, br:'Lowest prospect volume',  p:botB.total, c:botB.yes, r:botB.rate, acc:'#F43F5E' },
     { badge:'⭐ Top TL',        bc:'#1E40AF', bb:'#DBEAFE', name:topTL.name,br:topTL.branch,              p:topTL.total,c:topTL.yes,r:topTL.rate,acc:'#3B82F6' },
     { badge:'📉 Bottom TL',     bc:'#92400E', bb:'#FEF3C7', name:botTL.name,br:botTL.branch,              p:botTL.total,c:botTL.yes,r:botTL.rate,acc:'#F59E0B' },
   ];
- 
+
   document.getElementById('tbGrid').innerHTML = defs.map((d,i) => `
     <div class="tb-card" style="animation-delay:${i*.06}s">
       <div class="tb-accent" style="background:${d.acc}"></div>
@@ -884,7 +1022,7 @@ function renderTopBot(st) {
       </div>
     </div>`).join('');
 }
- 
+
 // ═══════════════════════════════════════════════════════════
 //  CHART 1 — Branch Count (horizontal) with click drill-down
 // ═══════════════════════════════════════════════════════════
@@ -921,7 +1059,7 @@ function renderChart1(st) {
     }
   });
 }
- 
+
 // ═══════════════════════════════════════════════════════════
 //  CHART 2 — Branch Conversion Rate
 // ═══════════════════════════════════════════════════════════
@@ -952,7 +1090,7 @@ function renderChart2(st) {
     }
   });
 }
- 
+
 // ═══════════════════════════════════════════════════════════
 //  CHART 3 — TL Count
 // ═══════════════════════════════════════════════════════════
@@ -979,7 +1117,7 @@ function renderChart3(st) {
     }
   });
 }
- 
+
 // ═══════════════════════════════════════════════════════════
 //  CHART 4 — TL Conversion Rate
 // ═══════════════════════════════════════════════════════════
@@ -1007,7 +1145,7 @@ function renderChart4(st) {
     }
   });
 }
- 
+
 // ═══════════════════════════════════════════════════════════
 //  CHART 5 — Daily Trend
 // ═══════════════════════════════════════════════════════════
@@ -1027,7 +1165,7 @@ function renderChartDaily(rows) {
     const sl = vals.slice(Math.max(0,i-4),i+1);
     return +(sl.reduce((s,v)=>s+v,0)/sl.length).toFixed(1);
   });
- 
+
   STATE.charts.cDaily = new Chart(document.getElementById('cDaily').getContext('2d'), {
     type:'bar',
     data:{
@@ -1055,7 +1193,7 @@ function renderChartDaily(rows) {
     }
   });
 }
- 
+
 // ═══════════════════════════════════════════════════════════
 //  CHART 6 — Avg Forward Projection per TL by Branch
 // ═══════════════════════════════════════════════════════════
@@ -1107,7 +1245,7 @@ function renderChart6(st) {
     }
   });
 }
- 
+
 // ═══════════════════════════════════════════════════════════
 //  HEATMAP — clickable for drill-down
 // ═══════════════════════════════════════════════════════════
@@ -1120,7 +1258,7 @@ function lerpColor(a,b,t){
 const HCOLS=[['#DBEAFE','#1E40AF'],['#D1FAE5','#166534'],['#FEF3C7','#92400E'],['#FCE7F3','#9D174D'],
              ['#E0E7FF','#3730A3'],['#CCFBF1','#134E4A'],['#FEE2E2','#991B1B'],['#F3E8FF','#6B21A8'],
              ['#ECFDF5','#065F46'],['#FFF7ED','#7C2D12'],['#EFF6FF','#1E3A8A'],['#F0FDFA','#134E4A'],['#FDF4FF','#701A75']];
- 
+
 function renderHmap(st) {
   const max = st.branches[0]?.total || 1;
   document.getElementById('hmap').innerHTML = st.branches.map((b,i) => {
@@ -1137,7 +1275,7 @@ function renderHmap(st) {
     </div>`;
   }).join('');
 }
- 
+
 // ═══════════════════════════════════════════════════════════
 //  LEADERBOARD with branch filter
 // ═══════════════════════════════════════════════════════════
@@ -1146,16 +1284,16 @@ function renderLeaderboard(st) {
   const tls = filterBranch
     ? st.tls.filter(t => t.branch === filterBranch)
     : st.tls;
- 
+
   const medals = ['🥇','🥈','🥉'];
   const maxT   = tls[0]?.total || 1;
- 
+
   if (!tls.length) {
     document.getElementById('lboard').innerHTML =
       `<div class="empty-state" style="padding:20px"><div class="empty-icon">👥</div><div>No TLs for this branch</div></div>`;
     return;
   }
- 
+
   document.getElementById('lboard').innerHTML = tls.slice(0,20).map((t,i) => {
     const medal = medals[i] || `<span style="font-size:10px;color:var(--muted)">${i+1}</span>`;
     const bw    = ((t.total/maxT)*100).toFixed(0);
@@ -1172,7 +1310,7 @@ function renderLeaderboard(st) {
     </div>`;
   }).join('');
 }
- 
+
 // ═══════════════════════════════════════════════════════════
 //  FUNNEL
 // ═══════════════════════════════════════════════════════════
@@ -1196,7 +1334,7 @@ function renderFunnel(st) {
   });
   document.getElementById('funnel').innerHTML = html;
 }
- 
+
 // ═══════════════════════════════════════════════════════════
 //  DRILL-DOWN: Branch → TL chart
 // ═══════════════════════════════════════════════════════════
@@ -1208,7 +1346,7 @@ function setDrillBranch(branch) {
   document.getElementById('drillView').classList.add('show');
   document.getElementById('drillView').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
- 
+
 function clearDrill() {
   STATE.activeBranch = null;
   document.getElementById('branchSel').value = '';
@@ -1216,7 +1354,7 @@ function clearDrill() {
   document.getElementById('drillPanel').classList.remove('show');
   renderAll();
 }
- 
+
 function renderDrillChart(branch) {
   dc('cDrill');
   // Get TLs for this branch from ALL month data (no today filter for drill)
@@ -1232,15 +1370,15 @@ function renderDrillChart(branch) {
     if ((r['Conversion']||'').toLowerCase()==='yes') tlMap[tl].yes++;
   });
   const tls = Object.entries(tlMap).sort((a,b)=>b[1].total-a[1].total);
- 
+
   document.getElementById('drillViewTitle').textContent = `TL Breakdown — ${branch}`;
- 
+
   if (!tls.length) {
     document.getElementById('cDrill').style.display='none';
     return;
   }
   document.getElementById('cDrill').style.display='';
- 
+
   STATE.charts.cDrill = new Chart(document.getElementById('cDrill').getContext('2d'), {
     type:'bar',
     data:{
@@ -1267,7 +1405,7 @@ function renderDrillChart(branch) {
     }
   });
 }
- 
+
 function updateDrillPanel(st) {
   const panel = document.getElementById('drillPanel');
   if (!STATE.activeBranch) { panel.classList.remove('show'); return; }
@@ -1278,7 +1416,7 @@ function updateDrillPanel(st) {
   document.getElementById('drillConv').textContent  = b.yes;
   document.getElementById('drillRate').textContent  = b.rate + '%';
 }
- 
+
 // ═══════════════════════════════════════════════════════════
 //  TODAY SNAPSHOT — always today, always all months
 // ═══════════════════════════════════════════════════════════
@@ -1295,10 +1433,10 @@ function renderTodaySnap() {
     snap[b].total++;
     if ((r['Conversion']||'').toLowerCase()==='yes') snap[b].yes++;
   });
- 
+
   document.getElementById('todaySnapDate').textContent = `— ${todayDisplay()}`;
   const entries = Object.entries(snap).sort((a,b)=>b[1].total-a[1].total);
- 
+
   const wrap = document.getElementById('todayGridWrap');
   if (!entries.length) {
     wrap.innerHTML = `<div class="empty-state">
@@ -1308,7 +1446,7 @@ function renderTodaySnap() {
     </div>`;
     return;
   }
- 
+
   wrap.innerHTML = `<div class="today-grid">${entries.map(([b,v],i) => {
     const rate = v.total?((v.yes/v.total)*100).toFixed(1):0;
     return `<div class="today-cell" style="border-top:3px solid ${pc(i)};animation-delay:${i*.04}s">
@@ -1318,7 +1456,7 @@ function renderTodaySnap() {
     </div>`;
   }).join('')}</div>`;
 }
- 
+
 // ═══════════════════════════════════════════════════════════
 //  INSIGHTS
 // ═══════════════════════════════════════════════════════════
@@ -1334,7 +1472,7 @@ function renderInsights(st, lbl) {
   const top3sum  = st.branches.slice(0,3).reduce((s,b)=>s+b.total,0);
   const top3pct  = st.total?((top3sum/st.total)*100).toFixed(0):0;
   const avgtl    = st.tls.length?(st.total/st.tls.length).toFixed(1):0;
- 
+
   const ins = [
     `<b>${topB.name}</b> leads ${lbl} with <b class="info">${topB.total} prospects</b> — ${avg>0?((topB.total/avg-1)*100).toFixed(0):0}% above average of ${avg}.`,
     `Top 3 branches (<b>${st.branches.slice(0,3).map(b=>b.name).join(', ')}</b>) account for <b class="info">${top3pct}%</b> of total pipeline (${top3sum}/${st.total}).`,
@@ -1349,31 +1487,242 @@ function renderInsights(st, lbl) {
     `<b>${botB.name}</b> has the lowest volume at <b class="warn">${botB.total} prospects</b>. Investigate staffing, lead source, and territory coverage.`,
     `Chart 6 shows TL projection density per branch. Branches with high avg/TL are efficient — branches with low avg/TL may need more TL capacity or better lead pipelines.`,
   ];
- 
+
   document.getElementById('insights').innerHTML = ins.map((t,i) => `
     <div class="ins-card" style="animation-delay:${i*.04}s">
       <div class="ins-n">${String(i+1).padStart(2,'0')}</div>
       <div class="ins-txt">${t}</div>
     </div>`).join('');
 }
- 
+
+// ═══════════════════════════════════════════════════════════
+//  MULTI-DATE FILTER
+// ═══════════════════════════════════════════════════════════
+function populateDateFilter() {
+  const monthRows = STATE.allRows.filter(r => r['Month'] === STATE.activeMonth);
+  const dates = [...new Set(monthRows.map(r => (r['Date']||'').trim()).filter(Boolean))].sort((a,b) => {
+    const pa = a.split('/'), pb = b.split('/');
+    return new Date(+pa[2],+pa[0]-1,+pa[1]) - new Date(+pb[2],+pb[0]-1,+pb[1]);
+  });
+
+  const wrap = document.getElementById('dateMultiWrap');
+  wrap.innerHTML = dates.map(d => {
+    const p = d.split('/');
+    const label = p.length===3 ? new Date(+p[2],+p[0]-1,+p[1]).toLocaleDateString('en-IN',{day:'2-digit',month:'short',weekday:'short'}) : d;
+    const checked = STATE.selectedDates === null || STATE.selectedDates.has(d) ? 'checked' : '';
+    return `<label class="date-chk-item">
+      <input type="checkbox" value="${d}" ${checked} onchange="onDateCheckChange()"> ${label}
+    </label>`;
+  }).join('');
+
+  updateDateSelCount(dates.length, dates.length);
+}
+
+function onDateCheckChange() {
+  const boxes = document.querySelectorAll('#dateMultiWrap input[type=checkbox]');
+  const total  = boxes.length;
+  const checked = [...boxes].filter(b => b.checked);
+
+  if (checked.length === total) {
+    STATE.selectedDates = null; // all selected = no filter
+  } else {
+    STATE.selectedDates = new Set(checked.map(b => b.value));
+  }
+  updateDateSelCount(checked.length, total);
+  renderAll();
+}
+
+function updateDateSelCount(n, total) {
+  const el = document.getElementById('dateSel Count');
+  if (el) el.textContent = n === total ? `All ${total} dates selected` : `${n} of ${total} dates selected`;
+}
+
+function selectAllDates() {
+  STATE.selectedDates = null;
+  populateDateFilter();
+  renderAll();
+}
+
+function clearAllDates() {
+  STATE.selectedDates = new Set();
+  const boxes = document.querySelectorAll('#dateMultiWrap input[type=checkbox]');
+  boxes.forEach(b => b.checked = false);
+  updateDateSelCount(0, boxes.length);
+  renderAll();
+}
+
+function selectThisWeek() {
+  const now = new Date();
+  const day = now.getDay(); // 0=Sun
+  const startOfWeek = new Date(now); startOfWeek.setDate(now.getDate() - day);
+  const endOfWeek   = new Date(startOfWeek); endOfWeek.setDate(startOfWeek.getDate() + 6);
+
+  const boxes = document.querySelectorAll('#dateMultiWrap input[type=checkbox]');
+  const thisWeekDates = new Set();
+  boxes.forEach(b => {
+    const p = b.value.split('/');
+    if (p.length !== 3) return;
+    const d = new Date(+p[2], +p[0]-1, +p[1]);
+    if (d >= startOfWeek && d <= endOfWeek) { b.checked = true; thisWeekDates.add(b.value); }
+    else b.checked = false;
+  });
+  STATE.selectedDates = thisWeekDates.size > 0 ? thisWeekDates : null;
+  updateDateSelCount(thisWeekDates.size, boxes.length);
+  renderAll();
+}
+
+// ═══════════════════════════════════════════════════════════
+//  WEEKLY LOCATION SNAPSHOT
+// ═══════════════════════════════════════════════════════════
+function getWeekDates(offset) {
+  const now = new Date();
+  const day = now.getDay();
+  const start = new Date(now);
+  start.setDate(now.getDate() - day + offset * 7);
+  start.setHours(0,0,0,0);
+  const days = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(start);
+    d.setDate(start.getDate() + i);
+    days.push(d);
+  }
+  return days;
+}
+
+function renderWeeklySnapshot() {
+  const offset = STATE.weekOffset;
+  const days   = getWeekDates(offset);
+  const today  = new Date(); today.setHours(0,0,0,0);
+
+  // Nav label
+  const fmt = d => d.toLocaleDateString('en-IN',{day:'2-digit',month:'short'});
+  document.getElementById('weekNavLabel').textContent = `${fmt(days[0])} — ${fmt(days[6])}`;
+  document.getElementById('weeklyLbl').textContent    = `— Week of ${fmt(days[0])}`;
+
+  // Build date keys for this week (M/D/YYYY format matching CSV)
+  const dayKeys = days.map(d => `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()}`);
+  const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+  // Filter to active month rows only
+  const monthRows = STATE.allRows.filter(r => r['Month'] === STATE.activeMonth);
+
+  // Group by branch, then by day
+  const branchMap = {};
+  monthRows.forEach(r => {
+    const b   = (r['Location']||'').trim();
+    const raw = (r['Date']||'').trim();
+    const yes = (r['Conversion']||'').toLowerCase() === 'yes';
+    if (!b || !dayKeys.includes(raw)) return;
+    if (!branchMap[b]) branchMap[b] = {};
+    if (!branchMap[b][raw]) branchMap[b][raw] = { total:0, yes:0 };
+    branchMap[b][raw].total++;
+    if (yes) branchMap[b][raw].yes++;
+  });
+
+  const branches = Object.keys(branchMap).sort();
+  const grid = document.getElementById('weeklyGrid');
+
+  if (!branches.length) {
+    grid.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-title">No Data for This Week</div>No prospects found in the selected month for ${fmt(days[0])} — ${fmt(days[6])}.</div>`;
+    return;
+  }
+
+  // Max per cell for bar sizing
+  let maxDay = 1;
+  branches.forEach(b => dayKeys.forEach(dk => { if (branchMap[b][dk]) maxDay = Math.max(maxDay, branchMap[b][dk].total); }));
+
+  grid.innerHTML = branches.map((b, bi) => {
+    const weekTotal = dayKeys.reduce((s,dk) => s + (branchMap[b][dk]?.total||0), 0);
+    const weekConv  = dayKeys.reduce((s,dk) => s + (branchMap[b][dk]?.yes||0), 0);
+    const cells = dayKeys.map((dk, di) => {
+      const v = branchMap[b][dk] || { total:0, yes:0 };
+      const isToday = days[di].getTime() === today.getTime();
+      const barW = maxDay ? ((v.total/maxDay)*100).toFixed(0) : 0;
+      const col  = v.total > 0 ? (v.yes > 0 ? '#22C55E' : '#3B82F6') : '#E2E8F4';
+      return `<div class="week-day-cell ${isToday?'today-col':''}">
+        <div class="week-day-name">${dayNames[di]}</div>
+        <div class="week-day-date">${days[di].getDate()}</div>
+        <div class="week-day-num" style="color:${v.total>0?'var(--text)':'var(--muted)'}">${v.total||'—'}</div>
+        ${v.yes>0 ? `<div class="week-conv-badge">${v.yes}✓</div>` : '<div style="height:16px"></div>'}
+        <div class="week-day-bar" style="background:${col};width:${barW}%;min-width:${v.total>0?'4px':'0'}"></div>
+      </div>`;
+    }).join('');
+    return `<div class="week-row-card" style="animation-delay:${bi*.04}s">
+      <div class="week-row-hdr">
+        <div class="week-row-label">🏢 ${b}</div>
+        <div style="display:flex;gap:10px;align-items:center">
+          <div class="week-row-total">${weekTotal} prospects</div>
+          ${weekConv>0?`<div class="week-conv-badge">${weekConv} converted</div>`:''}
+        </div>
+      </div>
+      <div class="week-cells">${cells}</div>
+    </div>`;
+  }).join('');
+}
+
+function shiftWeek(dir) {
+  STATE.weekOffset += dir;
+  renderWeeklySnapshot();
+}
+
+// ═══════════════════════════════════════════════════════════
+//  VIEWER / VIEW COUNTER (localStorage-based simulation)
+// ═══════════════════════════════════════════════════════════
+function initViewerCounter() {
+  const todayKey = 'vw_' + new Date().toISOString().slice(0,10);
+  const liveKey  = 'vw_live';
+
+  // Increment today's total view count
+  const todayCount = parseInt(localStorage.getItem(todayKey)||'0') + 1;
+  localStorage.setItem(todayKey, todayCount);
+  document.getElementById('vwTotal').textContent = todayCount;
+
+  // Simulate live viewers using a "heartbeat" timestamp set
+  const now = Date.now();
+  let liveData = {};
+  try { liveData = JSON.parse(localStorage.getItem(liveKey)||'{}'); } catch(e){}
+
+  // Set this tab's heartbeat
+  const tabId = sessionStorage.getItem('tabId') || ('tab_' + Math.random().toString(36).slice(2));
+  sessionStorage.setItem('tabId', tabId);
+  liveData[tabId] = now;
+
+  // Prune tabs older than 30s
+  Object.keys(liveData).forEach(k => { if (now - liveData[k] > 30000) delete liveData[k]; });
+  localStorage.setItem(liveKey, JSON.stringify(liveData));
+
+  const liveCount = Math.max(1, Object.keys(liveData).length);
+  document.getElementById('vwLive').textContent  = liveCount;
+  document.getElementById('vwTotal').textContent = todayCount;
+
+  // Pulse the dot green if more than 1 viewer
+  const dot = document.getElementById('vwDot');
+  dot.style.background = liveCount > 1 ? '#22C55E' : '#F59E0B';
+
+  // Refresh heartbeat every 20 seconds
+  setTimeout(initViewerCounter, 20000);
+}
+
 // ═══════════════════════════════════════════════════════════
 //  FILTER EVENT HANDLERS
 // ═══════════════════════════════════════════════════════════
 function onMonthChange() {
   STATE.activeMonth  = document.getElementById('monthSel').value;
   STATE.activeBranch = null;
+  STATE.selectedDates = null;
   document.getElementById('drillView').classList.remove('show');
+  populateDateFilter();
   renderAll();
+  renderWeeklySnapshot();
 }
- 
+
 function toggleToday() {
   STATE.todayOnly = !STATE.todayOnly;
   document.getElementById('todayToggle').classList.toggle('active', STATE.todayOnly);
   document.getElementById('todayChk').checked = STATE.todayOnly;
   renderAll();
 }
- 
+
 function onBranchChange() {
   const val = document.getElementById('branchSel').value;
   if (val) {
@@ -1382,7 +1731,7 @@ function onBranchChange() {
     clearDrill();
   }
 }
- 
+
 // ═══════════════════════════════════════════════════════════
 //  COUNTDOWN
 // ═══════════════════════════════════════════════════════════
@@ -1397,7 +1746,7 @@ function startCountdown() {
     document.getElementById('cdTimer').textContent = `${m}:${s}`;
   }, 1000);
 }
- 
+
 // ═══════════════════════════════════════════════════════════
 //  MAIN REFRESH
 // ═══════════════════════════════════════════════════════════
@@ -1413,7 +1762,7 @@ async function refreshData() {
   }
   startCountdown();
 }
- 
+
 // ═══════════════════════════════════════════════════════════
 //  INIT
 // ═══════════════════════════════════════════════════════════
@@ -1421,6 +1770,8 @@ window.addEventListener('DOMContentLoaded', async () => {
   try {
     await fetchData();
     renderAll();
+    renderWeeklySnapshot();
+    initViewerCounter();
   } catch(e) {
     document.getElementById('errBar').style.display = 'block';
     document.getElementById('errBar').textContent =
@@ -1432,7 +1783,3 @@ window.addEventListener('DOMContentLoaded', async () => {
 </script>
 </body>
 </html>
- 
-
-
-
